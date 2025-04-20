@@ -1,52 +1,46 @@
 import { router, Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
-import { useAuth } from "@clerk/clerk-expo";
+import {
+  HouseLine,
+  MagnifyingGlass,
+  Heart,
+  User,
+  PlusSquare,
+} from "phosphor-react-native";
 import * as Haptics from "expo-haptics";
+
 const Layout = () => {
-  const { signOut } = useAuth();
-  const CreateIcon = ({
-    color,
-    size,
-    focused,
-  }: {
-    color: string;
-    size: number;
-    focused: boolean;
-  }) => {
+  const CreateIcon = () => {
+    // Ensure `key` is not passed to AddSquareIcon
+
     return (
       <View
-        className={` rounded-full p-2 absolute w-20 h-20 items-center justify-center ${focused ? "bg-blue-500" : "bg-neutral-100"}`}
+        className={`rounded-full p-2 absolute w-20 h-20 items-center justify-center bg-[#AD5691]`}
       >
-        <Ionicons
-          name={focused ? "add" : "add-outline"}
-          size={size}
-          color={focused ? "white" : color}
-        />
+        <PlusSquare size={32} color={"white"} weight='duotone' />
       </View>
     );
   };
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "blue",
+        tabBarActiveTintColor: "#AD5691",
         tabBarInactiveTintColor: "gray",
         tabBarShowLabel: false,
         tabBarStyle: { backgroundColor: "white" },
+        tabBarItemStyle: {
+          borderTopWidth: 2,
+          borderTopColor: "transparent",
+        },
       }}
     >
       <Tabs.Screen
         name='index'
         options={{
+          headerShown: false,
           title: "Home",
-          tabBarIcon({ color, size, focused }) {
-            return (
-              <Ionicons
-                name={focused ? "home" : "home-outline"}
-                size={size}
-                color={color}
-              />
-            );
+          tabBarIcon({ color, size }) {
+            return <HouseLine size={size} color={color} weight='duotone' />;
           },
         }}
       />
@@ -54,13 +48,9 @@ const Layout = () => {
         name='search'
         options={{
           title: "Search",
-          tabBarIcon({ color, size, focused }) {
+          tabBarIcon({ color, size }) {
             return (
-              <Ionicons
-                name={focused ? "search" : "search-outline"}
-                size={size}
-                color={color}
-              />
+              <MagnifyingGlass size={size} color={color} weight='duotone' />
             );
           },
         }}
@@ -69,8 +59,8 @@ const Layout = () => {
         name='create'
         options={{
           title: "Create",
-          tabBarIcon({ color, size, focused }) {
-            return CreateIcon({ color, size, focused });
+          tabBarIcon({ color, size }) {
+            return CreateIcon();
           },
         }}
         listeners={{
@@ -85,37 +75,18 @@ const Layout = () => {
         name='favourites'
         options={{
           title: "Favourites",
-          tabBarIcon({ color, size, focused }) {
-            return (
-              <Ionicons
-                name={focused ? "heart" : "heart-outline"}
-                size={size}
-                color={color}
-              />
-            );
+          tabBarIcon({ color, size }) {
+            return <Heart size={size} color={color} weight='duotone' />;
           },
         }}
       />
       <Tabs.Screen
         name='profile'
         options={{
-          tabBarIcon({ color, size, focused }) {
-            return (
-              <Ionicons
-                name={focused ? "person" : "person-outline"}
-                size={size}
-                color={color}
-              />
-            );
+          headerShown: false,
+          tabBarIcon({ color, size }) {
+            return <User size={size} color={color} weight='duotone' />;
           },
-          headerRight: () => (
-            <Ionicons
-              name='log-out-outline'
-              size={24}
-              color='black'
-              onPress={() => signOut()}
-            />
-          ),
         }}
       />
     </Tabs>

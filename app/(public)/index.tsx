@@ -1,6 +1,8 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
 import React from "react";
 import { useOAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+
 const Page = () => {
   const { startOAuthFlow: startFacebookOAuthFlow } = useOAuth({
     strategy: "oauth_facebook",
@@ -9,6 +11,12 @@ const Page = () => {
     strategy: "oauth_google",
   });
 
+  //get device safe bottom height
+  const bottomHeight =
+    Dimensions.get("window").height - Dimensions.get("screen").height;
+
+  //get window width and height
+  const windowWidth = Dimensions.get("window").width;
   const handleFacebookLogin = async () => {
     try {
       const { createdSessionId, setActive } = await startFacebookOAuthFlow();
@@ -38,21 +46,68 @@ const Page = () => {
     }
   };
   return (
-    <View className='flex-1 p-6 items-center justify-center'>
-      <Text className='color-red-500'>Index Name</Text>
-      <View className='flex flex-row gap-4'>
-        <TouchableOpacity
-          className='flex-1 bg-blue-500 rounded p-2'
-          onPress={handleFacebookLogin}
-        >
-          <Text className='text-white'>Facebook</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          className=' flex-1 bg-red-500 rounded p-2'
-          onPress={handleGoogleLogin}
-        >
-          <Text className='text-white'>Google</Text>
-        </TouchableOpacity>
+    <View className='flex-1 items-start justify-start bg-[#ffffff]'>
+      <Image
+        source={require("@/assets/images/login.png")}
+        style={{ width: windowWidth, height: "40%" }}
+        className={`mb-4`}
+      />
+      <View
+        className={`w-full items-center justify-center flex-1 flex-col gap-4`}
+      >
+        <View className='flex flex-col gap-1'>
+          <Text className='text-3xl font-bold'>
+            Welcome to <Text className='text-[#AD5691]'>ThriftyNepal</Text>
+          </Text>
+          <Text className='text-lg text-neutral-500'>
+            Sign in to your account to get started
+          </Text>
+        </View>
+        <View className='flex-col p-6 gap-4'>
+          <TouchableOpacity
+            className='border-solid border border-neutral-200 rounded-md elevation-md px-6 py-3 flex-row items-center gap-4'
+            onPress={handleFacebookLogin}
+          >
+            <Image
+              width={40}
+              height={40}
+              style={{
+                width: 40,
+                height: 40,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              source={require("@/assets/images/facebook.png")}
+            />
+            <Text className='text-lg text-bold text-neutral-900'>
+              Continue with Facebook
+            </Text>
+            <Ionicons name='chevron-forward-outline' size={20} color='black' />
+          </TouchableOpacity>
+          <TouchableOpacity
+            className='border-solid border border-neutral-200 rounded-md elevation-md px-6 py-3 flex-row items-center gap-4'
+            onPress={handleGoogleLogin}
+          >
+            <Image
+              width={40}
+              height={40}
+              style={{
+                width: 40,
+                height: 40,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              source={require("@/assets/images/google.png")}
+            />
+            <Text className='text-lg text-bold text-neutral-900'>
+              Continue with Google
+            </Text>
+            <Ionicons name='chevron-forward-outline' size={20} color='black' />
+          </TouchableOpacity>
+        </View>
+        <Text className='text-lg text-bold text-blue-500'>
+          Continue as guest
+        </Text>
       </View>
     </View>
   );

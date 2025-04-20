@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, Stack } from "expo-router";
 import { Touchable, TouchableOpacity } from "react-native";
-
+import "@/styles/global.css";
 const Layout = () => {
   return (
     <Stack>

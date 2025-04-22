@@ -41,3 +41,14 @@ export const getUserByClerkId = query({
     return user;
   },
 });
+
+export const getUserById = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    const user = await ctx.db.get(args.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user;
+  },
+});

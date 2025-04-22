@@ -10,6 +10,7 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Id } from "@/convex/_generated/dataModel";
 import { Envelope, IdentificationCard } from "phosphor-react-native";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 interface UserProfileProps {
   props: {
@@ -24,6 +25,7 @@ interface UserProfileProps {
   };
 }
 const UserProfile = (props: UserProfileProps) => {
+  const { userProfile } = useUserProfile();
   console.log("user props 1:", props);
   return (
     <View>
@@ -39,7 +41,7 @@ const UserProfile = (props: UserProfileProps) => {
       >
         <View>
           <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-            {props.props.first_name + " " + props.props.last_name}
+            {userProfile?.first_name + " " + userProfile?.last_name}
           </Text>
           <View
             style={{
@@ -53,7 +55,7 @@ const UserProfile = (props: UserProfileProps) => {
           >
             <IdentificationCard size={20} weight='thin' />
             <Text style={{ fontSize: 14, fontWeight: "300" }}>
-              @{props.props.username}
+              @{userProfile?.username}
             </Text>
           </View>
           <View
@@ -68,13 +70,13 @@ const UserProfile = (props: UserProfileProps) => {
           >
             <Envelope size={20} weight='thin' />
             <Text style={{ fontSize: 14, fontWeight: "300" }}>
-              {props.props.email}
+              {userProfile?.email}
             </Text>
           </View>
         </View>
         <Image
           source={{
-            uri: props.props.imageUrl,
+            uri: userProfile?.imageUrl,
           }}
           width={64}
           height={64}

@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Touchable,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -14,9 +7,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import UserProfile from "./UserProfile";
-import { useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import ProductLists from "./ProductLists";
 
 type ProfileProps = {
   userId?: Id<"users">;
@@ -29,71 +19,42 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
 
   return (
     <View style={{ paddingTop: top }} className='flex'>
-      <FlatList
-        data={useQuery(api.products.getMyProducts, {
-          userId: userId ?? userProfile?._id ?? ("" as Id<"users">),
-        })}
-        renderItem={({ item }) => {
-          return item && typeof item.brand === "string" ? (
-            <ProductLists item={item} />
-          ) : null;
+      <View
+        style={{
+          paddingBottom: 24,
+          borderBottomColor: "#ccc",
+          borderBottomWidth: 0.25,
         }}
-        ListEmptyComponent={() => {
-          return <Text>No products</Text>;
-        }}
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: StyleSheet.hairlineWidth,
-              backgroundColor: "#ccc",
-            }}
-          />
-        )}
-        ListHeaderComponent={() => {
-          return (
-            <View
-              style={{
-                paddingBottom: 24,
-                borderBottomColor: "#ccc",
-                borderBottomWidth: 0.25,
-              }}
+      >
+        {/* //Header Nav */}
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: showBackButton ? "space-between" : "flex-end",
+            alignItems: "center",
+            paddingHorizontal: 10,
+            paddingVertical: 5,
+          }}
+        >
+          {/* Header Left */}
+          {showBackButton && (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              className='flex-row gap-2 items-center p-2 bg-green-500'
             >
-              {/* //Header Nav */}
+              <Ionicons name='chevron-back-outline' size={16} color='black' />
+              <Text>Back</Text>
+            </TouchableOpacity>
+          )}
+          {/* Header Right */}
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: showBackButton ? "space-between" : "flex-end",
-                  alignItems: "center",
-                  paddingHorizontal: 10,
-                  paddingVertical: 5,
-                }}
-              >
-                {/* Header Left */}
-                {showBackButton && (
-                  <TouchableOpacity
-                    onPress={() => router.back()}
-                    className='flex-row gap-2 items-center p-2 bg-green-500'
-                  >
-                    <Ionicons
-                      name='chevron-back-outline'
-                      size={16}
-                      color='black'
-                    />
-                    <Text>Back</Text>
-                  </TouchableOpacity>
-                )}
-                {/* Header Right */}
-
-                <TouchableOpacity onPress={() => signOut()}>
-                  <Ionicons name='log-out-outline' size={24} color='black' />
-                </TouchableOpacity>
-              </View>
-              <UserProfile props={userProfile} />
-            </View>
-          );
-        }}
-      />
+          <TouchableOpacity onPress={() => signOut()}>
+            <Ionicons name='log-out-outline' size={24} color='black' />
+          </TouchableOpacity>
+        </View>
+        {userProfile && <UserProfile props={userProfile} />}
+      </View>
     </View>
   );
 };

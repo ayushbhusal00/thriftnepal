@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Add useEffect import
 import {
   View,
   Text,
@@ -6,28 +6,60 @@ import {
   Image,
   ScrollView,
   Alert,
-  StyleSheet,
   Pressable,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SelectList } from "react-native-dropdown-select-list";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useUserProfile } from "@/hooks/useUserProfile";
+
+// Define the type for route parameters
+type ProductParams = {
+  imageUri?: string;
+  identifiedProduct?: string;
+  productCategory?: string;
+  verbalDescription?: string;
+  size?: string;
+  condition?: string;
+  estimatedCost?: string;
+  brand?: string;
+  fabricsUsed?: string;
+  featureHighlights?: string;
+};
 
 type Product = {
-  brand: string;
+  imageUri?: string;
   identifiedProduct: string;
+  productCategory: string;
+  verbalDescription: string;
   size: string;
   condition: string;
   estimatedCost: string;
+  brand: string;
   fabricsUsed: string;
   featureHighlights: string;
-  productCategory: string;
-  verbalDescription: string;
-  productDescription: string;
-  imageUri?: string; // Added for image URI
+  userId: Id<"users">;
+  approved: boolean;
 };
 
 const AddProduct = () => {
-  const params = useLocalSearchParams<Product>(); // Retrieve navigation params
+  // Use ProductParams for useLocalSearchParams
+  const params = useLocalSearchParams<ProductParams>();
+  console.log("Params:", params); // Log the params object for debuggi
+  const { userProfile } = useUserProfile();
+  const generateUploadUrl = useMutation(api.products.generateUploadUrl);
+  const addProduct = useMutation(api.products.addProduct);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Check for user profile and navigate back if not loaded
+  useEffect(() => {
+    if (!userProfile?._id) {
+      Alert.alert("Error", "User profile not loaded. Please try again.");
+      router.back();
+    }
+  }, [userProfile]); // Run when userProfile changes
 
   const [formData, setFormData] = useState<Product>({
     brand: params.brand || "",
@@ -39,7 +71,9 @@ const AddProduct = () => {
     featureHighlights: params.featureHighlights || "",
     productCategory: params.productCategory || "",
     verbalDescription: params.verbalDescription || "",
-    productDescription: params.productDescription || "",
+    userId: userProfile?._id as Id<"users">, // Safe to use now
+    approved: false,
+    imageUri: params.imageUri || "",
   });
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "Regular"];
@@ -68,10 +102,64 @@ const AddProduct = () => {
     );
   };
 
-  const handleSubmit = () => {
-    // Handle form submission
-    console.log(formData);
+  const handleSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      // Validate required fields
+      if (
+        !formData.identifiedProduct ||
+        !formData.productCategory ||
+        !formData.verbalDescription ||
+        !formData.size ||
+        !formData.condition ||
+        !formData.estimatedCost ||
+        !formData.imageUri
+      ) {
+        Alert.alert("Error", "Please fill in all required fields.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Upload image
+      const uploadUrl = await generateUploadUrl();
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        headers: { "Content-Type": "image/jpeg" },
+        body: await fetch(formData.imageUri).then((res) => res.blob()),
+      });
+      const { storageId } = await response.json();
+
+      // Add product to Convex
+      await addProduct({
+        images: [storageId],
+        title: formData.identifiedProduct,
+        category: formData.productCategory,
+        description: formData.verbalDescription,
+        size: formData.size,
+        condition: formData.condition,
+        price: parseFloat(formData.estimatedCost),
+        brand: formData.brand || undefined,
+        fabrics: formData.fabricsUsed || undefined,
+        highlights: formData.featureHighlights || undefined,
+        userId: formData.userId,
+      });
+
+      Alert.alert("Success", "Product added successfully!");
+      router.back();
+    } catch (error) {
+      console.error("Error adding product:", error);
+      Alert.alert("Error", "Failed to add product. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  // Render nothing while userProfile is loading
+  if (!userProfile?._id) {
+    return null;
+  }
 
   return (
     <ScrollView className='flex-1 bg-white dark:bg-slate-900'>
@@ -83,7 +171,9 @@ const AddProduct = () => {
           <Text className='text-lg'>←</Text>
         </Pressable>
         <Image
-          source={{ uri: params.imageUri || "https://via.placeholder.com/150" }} // Use passed imageUri or fallback
+          source={{
+            uri: formData.imageUri || "https://via.placeholder.com/150",
+          }}
           className='w-full h-72 bg-gray-200'
         />
       </View>
@@ -125,6 +215,11 @@ const AddProduct = () => {
                 setFormData((prev) => ({ ...prev, size: val }))
               }
               data={sizes}
+              defaultOption={
+                sizes.includes(formData.size)
+                  ? { key: formData.size, value: formData.size }
+                  : undefined
+              }
               save='value'
               search={false}
               boxStyles={{
@@ -142,6 +237,14 @@ const AddProduct = () => {
                 setFormData((prev) => ({ ...prev, productCategory: val }))
               }
               data={categories}
+              defaultOption={
+                categories.includes(formData.productCategory)
+                  ? {
+                      key: formData.productCategory,
+                      value: formData.productCategory,
+                    }
+                  : undefined
+              }
               save='value'
               search={false}
               boxStyles={{
@@ -159,6 +262,11 @@ const AddProduct = () => {
                 setFormData((prev) => ({ ...prev, condition: val }))
               }
               data={conditions}
+              defaultOption={
+                conditions.includes(formData.condition)
+                  ? { key: formData.condition, value: formData.condition }
+                  : undefined
+              }
               save='value'
               search={false}
               boxStyles={{
@@ -228,10 +336,13 @@ const AddProduct = () => {
 
           <Pressable
             onPress={handleSubmit}
-            className='bg-blue-500 rounded-lg p-4 mt-6'
+            disabled={isSubmitting}
+            className={`rounded-lg p-4 mt-6 ${
+              isSubmitting ? "bg-blue-300" : "bg-blue-500"
+            }`}
           >
             <Text className='text-white text-center font-semibold'>
-              Add Product
+              {isSubmitting ? "Adding..." : "Add Product"}
             </Text>
           </Pressable>
         </View>

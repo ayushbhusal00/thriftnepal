@@ -52,6 +52,25 @@ export const getProducts = query({
   },
 });
 
+export const getProductById = query({
+  args: {
+    productId: v.id("products"),
+  },
+  handler: async (ctx, args) => {
+    const product = await ctx.db.get(args.productId);
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    const imageUrls = await Promise.all(
+      product.images.map((storageId) => ctx.storage.getUrl(storageId))
+    );
+    return {
+      ...product,
+      imageUrls: imageUrls.filter((url): url is string => url !== null),
+    };
+  },
+});
+
 export const getMyProducts = query({
   args: {
     userId: v.id("users"),

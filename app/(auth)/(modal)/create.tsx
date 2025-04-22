@@ -50,48 +50,64 @@ export default function Page() {
 
     if (!result.canceled) {
       try {
-        // const response = await fetch("/api/analyze", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     image: {
-        //       inlineData: {
-        //         data: result.assets[0].base64,
-        //         mimeType: "image/jpeg",
-        //       },
-        //     },
-        //   }),
-        // });
-        // const data = await response.json();
-        const data = {
-          productAnalysis: {
-            brand: "Unknown",
-            identifiedProduct:
-              "White quilted crossbody bag with a gold chain strap and a gold 'VK' logo.",
-            size: "S",
-            condition: "New",
-            estimatedCost: "70",
-            fabricsUsed:
-              "Likely made of faux leather (PU leather) with a quilted pattern. The hardware, including the logo and chain, appears to be gold-plated metal.",
-            featureHighlights:
-              "The quilted design provides visual texture and padded feel. The gold chain strap adds a luxurious touch and allows for crossbody or shoulder wear. The prominent 'VK' logo serves as a distinctive branding element.",
-            productCategory: "Bags",
-            verbalDescription:
-              "A stylish crossbody bag in white, featuring a quilted design and a front flap closure. The bag is adorned with a prominent gold 'VK' logo, adding a touch of elegance. It also features a gold chain strap, providing both functionality and fashion.",
-            productDescription:
-              "A stylish crossbody bag in white, featuring a quilted design and a front flap closure. The bag is adorned with a prominent gold 'VK' logo, adding a touch of elegance. It also features a gold chain strap, providing both functionality and fashion.",
+        const response = await fetch("/api/analyze", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
           },
-        };
-        router.replace({
-          pathname: "/AddProduct",
-          params: { ...data.productAnalysis, imageUri: result.assets[0].uri }, // Pass image URI
+          body: JSON.stringify({
+            image: {
+              inlineData: {
+                data: result.assets[0].base64,
+                mimeType: "image/jpeg",
+              },
+            },
+          }),
         });
-        console.log("Analysis Response:", data);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // const data = {
+        //   productAnalysis: {
+        //     brand: "Unknown",
+        //     identifiedProduct:
+        //       "White quilted crossbody bag with a gold chain strap and a gold 'VK' logo.",
+        //     size: "S",
+        //     condition: "New",
+        //     estimatedCost: "70",
+        //     fabricsUsed:
+        //       "Likely made of faux leather (PU leather) with a quilted pattern. The hardware, including the logo and chain, appears to be gold-plated metal.",
+        //     featureHighlights:
+        //       "The quilted design provides visual texture and padded feel. The gold chain strap adds a luxurious touch and allows for crossbody or shoulder wear. The prominent 'VK' logo serves as a distinctive branding element.",
+        //     productCategory: "Bags",
+        //     verbalDescription:
+        //       "A stylish crossbody bag in white, featuring a quilted design and a front flap closure. The bag is adorned with a prominent gold 'VK' logo, adding a touch of elegance. It also features a gold chain strap, providing both functionality and fashion.",
+        //     productDescription:
+        //       "A stylish crossbody bag in white, featuring a quilted design and a front flap closure. The bag is adorned with a prominent gold 'VK' logo, adding a touch of elegance. It also features a gold chain strap, providing both functionality and fashion.",
+        //   },
+        // };
+        // Use setTimeout to defer navigation
+        console.log("Product Analysis from api:", data.data.productAnalysis);
+
+        // Use requestAnimationFrame instead of setTimeout for better timing
+        requestAnimationFrame(() => {
+          router.replace({
+            pathname: "/AddProduct",
+            params: {
+              ...data.data.productAnalysis,
+              imageUri: result.assets[0].uri,
+            },
+          });
+        });
       } catch (error) {
-        console.error("Fetch Error:", error);
-        Alert.alert("Error", "Failed to analyze image. Please try again.");
+        console.error("Network or Analysis Error:", error);
+        Alert.alert(
+          "Connection Error",
+          "Please check your internet connection and try again."
+        );
       }
     }
   };

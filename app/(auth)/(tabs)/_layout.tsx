@@ -2,7 +2,7 @@ import { router, Tabs } from "expo-router";
 import { View } from "react-native";
 import {
   HouseLine,
-  MagnifyingGlass,
+  Storefront,
   Heart,
   User,
   PlusSquare,
@@ -45,13 +45,13 @@ const Layout = () => {
         }}
       />
       <Tabs.Screen
-        name='search'
+        name='marketplace'
         options={{
-          title: "Search",
+          headerShown: false,
+
+          title: "Marketplace",
           tabBarIcon({ color, size }) {
-            return (
-              <MagnifyingGlass size={size} color={color} weight='duotone' />
-            );
+            return <Storefront size={size} color={color} weight='duotone' />;
           },
         }}
       />

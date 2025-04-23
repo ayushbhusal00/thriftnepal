@@ -20,6 +20,7 @@ import {
   ShoppingCartSimple,
 } from "phosphor-react-native";
 import { router } from "expo-router";
+import { useFavourites } from "@/utils/Store";
 
 interface Product {
   _id: string;
@@ -30,10 +31,23 @@ interface Product {
   images: string[]; // Storage IDs from client uploads
   userId: Id<"users">;
   imageUrls: string[];
+  category: string;
+  size: string;
+  condition: string;
+  approved: false;
 }
 
 const ProductFeed = ({ item }: { item: Product }) => {
+  const { addFavourites, favourites } = useFavourites();
   const user = useQuery(api.users.getUserById, { userId: item.userId });
+
+  const isFavourite = favourites.some((product) => product._id === item._id);
+
+  const addProductToFavourites = () => {
+    addFavourites({
+      ...item,
+    });
+  };
 
   const imageUrl = user?.imageUrl;
 
@@ -115,7 +129,13 @@ const ProductFeed = ({ item }: { item: Product }) => {
                   gap: 12,
                 }}
               >
-                <Heart size={24} color='grey' />
+                <Pressable onPress={addProductToFavourites}>
+                  <Heart
+                    size={24}
+                    color={isFavourite ? "red" : "grey"}
+                    weight={isFavourite ? "fill" : "regular"}
+                  />
+                </Pressable>
                 <ChatTeardrop size={24} color='grey' />
                 <ShareFat size={24} color='grey' />
               </View>
@@ -127,10 +147,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
                   {/* Inner shadow overlay */}
                   <View style={styles.innerShadow} />
                   <View>
-                    <Text style={styles.whiteText}>
-                      {" "}
-                      Buy for ₹ {item.price}
-                    </Text>
+                    <Text style={styles.whiteText}>Add to Cart</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -144,6 +161,20 @@ const ProductFeed = ({ item }: { item: Product }) => {
                   style={{ fontWeight: "400", fontSize: 14, color: "grey" }}
                 >
                   Bags | {item.brand}
+                </Text>
+              </View>
+              <View
+                className=' px-2 py-1 bg-blue-200'
+                style={{
+                  backgroundColor: "#DFEDF4",
+                  borderRadius: 4,
+                  paddingHorizontal: 4,
+                  paddingVertical: 2,
+                  marginLeft: 10,
+                }}
+              >
+                <Text style={{ fontWeight: 700, color: "#314B57" }}>
+                  ₹ {item.price}
                 </Text>
               </View>
             </View>

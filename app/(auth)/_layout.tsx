@@ -8,9 +8,17 @@ const Layout = () => {
       <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
       <Stack.Screen name='StoriesViewer' options={{ headerShown: false }} />
       <Stack.Screen
-        name='(modal)/create'
+        name='paymentConfirmation'
+        options={{ title: "Confirm Payment" }}
+      />
+      <Stack.Screen
+        name='paymentWebview'
+        options={{ title: "eSewa Payment" }}
+      />
+      <Stack.Screen
+        name='create'
         options={{
-          presentation: "modal",
+          headerShown: false,
           title: "New Product",
           headerRight: () => {
             return (

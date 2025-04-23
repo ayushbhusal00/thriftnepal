@@ -13,7 +13,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "expo-router";
 import ProductFeed from "@/components/ProductFeed";
-import { handleInitiatePayment } from "@/utils/InitiatePayment";
+// import { handleInitiatePayment } from "@/utils/InitiatePayment";
 
 const Page = () => {
   const stories = useQuery(api.stories.list);
@@ -40,10 +40,10 @@ const Page = () => {
 
   const renderStoriesSection = () => (
     <View>
-      <Button
+      {/* <Button
         title='Initiate Payment (NPR 100)'
         onPress={() => handleInitiatePayment({ amount })}
-      />
+      /> */}
 
       <View className='px-6'>
         <Text className='text-xl font-bold mb-4'>Home</Text>

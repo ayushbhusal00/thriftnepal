@@ -8,6 +8,7 @@ import {
   PlusSquare,
   Camera,
   Image,
+  ShoppingCart,
 } from "phosphor-react-native";
 import * as Haptics from "expo-haptics";
 import { useState } from "react";
@@ -105,6 +106,7 @@ const Layout = () => {
           name='favourites'
           options={{
             title: "Favourites",
+            headerShown: false,
             tabBarIcon({ color, size }) {
               return <Heart size={size} color={color} weight='duotone' />;
             },
@@ -116,6 +118,17 @@ const Layout = () => {
             headerShown: false,
             tabBarIcon({ color, size }) {
               return <User size={size} color={color} weight='duotone' />;
+            },
+          }}
+        />
+        <Tabs.Screen
+          name='cart'
+          options={{
+            headerShown: false,
+            tabBarIcon({ color, size }) {
+              return (
+                <ShoppingCart size={size} color={color} weight='duotone' />
+              );
             },
           }}
         />

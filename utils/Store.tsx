@@ -11,15 +11,6 @@ interface FavouriteState {
   updateFavourites: (newFavourites: Product[]) => void;
 }
 
-// interface CartState {
-//   cart: Product[];
-//   cartCount: number;
-//   addCart: (newProduct: Product) => void;
-//   removeCart: (productId: string) => void;
-//   removeAllCart: () => void;
-//   updateCart: (newCart: Product[]) => void;
-// }
-
 export const useFavourites = create<FavouriteState>()(
   persist(
     (set) => ({
@@ -60,37 +51,49 @@ export const useFavourites = create<FavouriteState>()(
   )
 );
 
-// export const useCart = create<CartState>()(
-//   persist(
-//     (set) => ({
-//       cart: [],
-//       cartCount: 0,
-//       addCart: (newProduct: Product) =>
-//         set((state) => {
-//           if (state.cart.some((product) => product._id === newProduct._id)) {
-//             return state;
-//           }
-//           return {
-//             cart: [...state.cart, newProduct],
-//             cartCount: state.cartCount + 1,
-//           };
-//         }),
-//       removeCart: (productId: string) =>
-//         set((state) => {
-//           const newCart = state.cart.filter(
-//             (product) => product._id !== productId
-//           );
-//           return {
-//             cart: newCart,
-//             cartCount: newCart.length,
-//           };
-//         }),
-//       removeAllCart: () => set({ cart: [], cartCount: 0 }),
-//       updateCart: (newCart: Product[]) =>
-//         set({ cart: newCart, cartCount: newCart.length }),
-//     }),
-//     {
-//       name: "cart-storage", // Key for localStorage
-//     }
-//   )
-// );
+interface CartState {
+  cart: Product[];
+  cartCount: number;
+  addCart: (newProduct: Product) => void;
+  removeCart: (productId: string) => void;
+  removeAllCart: () => void;
+  updateCart: (newCart: Product[]) => void;
+}
+
+export const useCart = create<CartState>()(
+  persist(
+    (set) => ({
+      cart: [],
+      cartCount: 0,
+      addCart: (newProduct: Product) =>
+        set((state) => {
+          if (!newProduct._id || !newProduct.title || !newProduct.price) {
+            return state;
+          }
+          if (state.cart.some((product) => product._id === newProduct._id)) {
+            return state;
+          }
+          return {
+            cart: [...state.cart, newProduct],
+            cartCount: state.cartCount + 1,
+          };
+        }),
+      removeCart: (productId: string) =>
+        set((state) => {
+          const newCart = state.cart.filter(
+            (product) => product._id !== productId
+          );
+          return {
+            cart: newCart,
+            cartCount: newCart.length,
+          };
+        }),
+      removeAllCart: () => set({ cart: [], cartCount: 0 }),
+      updateCart: (newCart: Product[]) =>
+        set({ cart: newCart, cartCount: newCart.length }),
+    }),
+    {
+      name: "cart-storage", // Key for localStorage
+    }
+  )
+);

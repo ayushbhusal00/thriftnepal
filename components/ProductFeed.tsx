@@ -20,7 +20,7 @@ import {
   ShoppingCartSimple,
 } from "phosphor-react-native";
 import { router } from "expo-router";
-import { useFavourites } from "@/utils/Store";
+import { useCart, useFavourites } from "@/utils/Store";
 
 interface Product {
   _id: string;
@@ -45,6 +45,12 @@ const ProductFeed = ({ item }: { item: Product }) => {
 
   const addProductToFavourites = () => {
     addFavourites({
+      ...item,
+    });
+  };
+  const { addCart } = useCart();
+  const addItemToCart = () => {
+    addCart({
       ...item,
     });
   };
@@ -141,7 +147,9 @@ const ProductFeed = ({ item }: { item: Product }) => {
               </View>
               <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                  onPress={() => console.log("Add to cart")}
+                  onPress={() => {
+                    addItemToCart();
+                  }}
                   style={[styles.button, styles.blackButton]}
                 >
                   {/* Inner shadow overlay */}
@@ -152,8 +160,8 @@ const ProductFeed = ({ item }: { item: Product }) => {
                 </TouchableOpacity>
               </View>
             </View>
-            <View className='flex-row justify-center items-center mb-10'>
-              <View className='mb-10 flex-col flex-1 gap-2 '>
+            <View className='flex-row justify-center items-center'>
+              <View className=' flex-col flex-1 gap-2 '>
                 <Text style={{ fontWeight: "500", fontSize: 14 }}>
                   {item.title}
                 </Text>

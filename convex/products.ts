@@ -30,10 +30,31 @@ export const addProduct = mutation({
       ...args,
       userId: args.userId,
       approved: false, // Default to false until approved
+      sold: false, // Default to false until sold
     });
   },
 });
 
+export const getApprovedProducts = query({
+  args: {},
+  handler: async (ctx) => {
+    const products = await ctx.db
+      .query("products")
+      .filter((q) => q.eq(q.field("approved"), true))
+      .collect();
+    return Promise.all(
+      products.map(async (product) => {
+        const imageUrls = await Promise.all(
+          product.images.map((storageId) => ctx.storage.getUrl(storageId))
+        );
+        return {
+          ...product,
+          imageUrls: imageUrls.filter((url): url is string => url !== null),
+        };
+      })
+    );
+  },
+});
 export const getProducts = query({
   args: {},
   handler: async (ctx) => {
@@ -142,5 +163,36 @@ export const updateProduct = mutation({
     }
 
     await ctx.db.patch(productId, updates);
+  },
+});
+
+export const markProductAsSold = mutation({
+  args: {
+    productId: v.id("products"),
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    const product = await ctx.db.get(args.productId);
+    if (!product) {
+      throw new Error("Product not found");
+    }
+    if (product.userId !== args.userId) {
+      throw new Error("Can only mark your own products as sold");
+    }
+    await ctx.db.patch(args.productId, { sold: true });
+  },
+});
+
+export const markAnyProductAsSold = mutation({
+  args: {
+    productId: v.id("products"),
+  },
+  handler: async (ctx, args) => {
+    const product = await ctx.db.get(args.productId);
+    if (!product) {
+      throw new Error("Product not found");
+    }
+
+    await ctx.db.patch(args.productId, { sold: true });
   },
 });

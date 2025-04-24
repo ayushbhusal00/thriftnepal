@@ -17,10 +17,10 @@ import ProductFeed from "@/components/ProductFeed";
 
 const Page = () => {
   const stories = useQuery(api.stories.list);
-  const products = useQuery(api.products.getProducts);
+  const approvedProducts = useQuery(api.products.getApprovedProducts);
   const router = useRouter();
   const amount = "1000";
-  console.log("Stories:", stories);
+  // console.log("Stories:", stories);
 
   if (!stories) {
     return (
@@ -141,12 +141,10 @@ const Page = () => {
 
       {/* //uncomment code here to view the home page with stories and products */}
       <FlatList
-        data={products}
+        data={approvedProducts}
         renderItem={({ item }) =>
           item && typeof item.brand === "string" ? (
-            <ProductFeed
-              item={{ ...item, brand: item.brand || "", approved: false }}
-            />
+            <ProductFeed item={{ ...item, brand: item.brand || "" }} />
           ) : null
         }
         ListHeaderComponent={renderStoriesSection} // Stories section as header

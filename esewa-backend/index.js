@@ -42,6 +42,7 @@ app.post('/initiate-payment', async (req, res) => {
   paymentData.signature = signature;
 
   res.json({ paymentData });
+  console.log("Payment:", paymentData);
 });
 
 // Success and failure routes (for testing)

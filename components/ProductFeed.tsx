@@ -34,7 +34,9 @@ interface Product {
   category: string;
   size: string;
   condition: string;
-  approved: false;
+  approved: boolean;
+  sold: boolean;
+  _creationTime: Date;
 }
 
 const ProductFeed = ({ item }: { item: Product }) => {
@@ -57,7 +59,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
 
   const imageUrl = user?.imageUrl;
 
-  console.log("product item:", item);
+  // console.log("product item:", item);
   return (
     <Pressable
       style={{ width: "100%", flex: 1 }}
@@ -111,6 +113,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
                 borderWidth: 1,
                 borderColor: "#ccc",
                 borderRadius: 12,
+                position: "relative",
               }}
             >
               {item.images.map((uri, index) => (
@@ -123,6 +126,23 @@ const ProductFeed = ({ item }: { item: Product }) => {
                   height={200}
                 />
               ))}
+              {item.sold && (
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 8,
+                    right: 8,
+                    backgroundColor: "black",
+                    borderRadius: 8,
+                    paddingHorizontal: 8,
+                    paddingVertical: 4,
+                  }}
+                >
+                  <Text style={{ color: "white", fontWeight: "700" }}>
+                    Sold
+                  </Text>
+                </View>
+              )}
             </View>
             <View className='flex-row'>
               <View
@@ -145,20 +165,22 @@ const ProductFeed = ({ item }: { item: Product }) => {
                 <ChatTeardrop size={24} color='grey' />
                 <ShareFat size={24} color='grey' />
               </View>
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  onPress={() => {
-                    addItemToCart();
-                  }}
-                  style={[styles.button, styles.blackButton]}
-                >
-                  {/* Inner shadow overlay */}
-                  <View style={styles.innerShadow} />
-                  <View>
-                    <Text style={styles.whiteText}>Add to Cart</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
+              {!item.sold && (
+                <View style={styles.buttonContainer}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      addItemToCart();
+                    }}
+                    style={[styles.button, styles.blackButton]}
+                  >
+                    {/* Inner shadow overlay */}
+                    <View style={styles.innerShadow} />
+                    <View>
+                      <Text style={styles.whiteText}>Add to Cart</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
             <View className='flex-row justify-center items-center'>
               <View className=' flex-col flex-1 gap-2 '>

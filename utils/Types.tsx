@@ -13,4 +13,6 @@ export interface Product {
   highlights?: string;
   userId: string;
   images: string[]; // URLs after resolving storage IDs
+  //Add more fields: Sold
+  sold: boolean;
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import { WebView } from "react-native-webview";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 
 interface PaymentData {
   amount: string;
@@ -27,7 +27,6 @@ const PaymentWebView: React.FC = () => {
     <!DOCTYPE html>
     <html>
       <head>
-        <!-- Disable zooming by setting viewport -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
       </head>
       <body>
@@ -50,16 +49,75 @@ const PaymentWebView: React.FC = () => {
     </html>
   `;
 
+  const handleNavigationStateChange = (navState: any) => {
+    const { url } = navState;
+
+    // Check if the URL matches the success_url
+    if (url.includes("http://localhost:3000/success")) {
+      // Extract query parameters from the URL
+      const params = new URLSearchParams(url.split("?")[1]);
+      const rawData = params.get("data"); // Get the base64-encoded data string
+
+      let data = {};
+      if (rawData) {
+        try {
+          // Decode the base64 string and parse it as JSON
+          const decodedData = atob(rawData);
+          data = JSON.parse(decodedData);
+        } catch (error) {
+          console.error("Error decoding eSewa response:", error);
+        }
+      }
+
+      // Navigate to the success page with the decoded data
+      router.replace({
+        pathname: "/success",
+
+        params: {
+          message: "Payment successful",
+          data: JSON.stringify(data),
+        },
+      });
+    }
+
+    // Check if the URL matches the failure_url
+    if (url.includes("http://localhost:3000/failure")) {
+      // Extract query parameters from the URL
+      const params = new URLSearchParams(url.split("?")[1]);
+      const rawData = params.get("data");
+
+      let data = {};
+      if (rawData) {
+        try {
+          const decodedData = atob(rawData);
+          data = JSON.parse(decodedData);
+        } catch (error) {
+          console.error("Error decoding eSewa response:", error);
+        }
+      }
+
+      // Navigate to the failure page with the decoded data
+      router.replace({
+        pathname: "/failure",
+        params: {
+          message: "Payment failed",
+          data: JSON.stringify(data),
+        },
+      });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <WebView
         source={{ html: formHtml }}
         startInLoadingState={true}
         renderLoading={() => <ActivityIndicator size='large' color='#0000ff' />}
-        scalesPageToFit={false} // Disable automatic scaling
-        minimumZoomScale={1.0} // Prevent zooming out
-        maximumZoomScale={1.0} // Prevent zooming in
-        setSupportMultipleWindows={false} // Optional: Prevent new windows from opening
+        scalesPageToFit={false}
+        minimumZoomScale={1.0}
+        maximumZoomScale={1.0}
+        setSupportMultipleWindows={false}
+        onNavigationStateChange={handleNavigationStateChange}
       />
     </View>
   );

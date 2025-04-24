@@ -16,7 +16,7 @@ import { handleInitiatePayment } from "@/utils/InitiatePayment";
 const Page = () => {
   const { cart, cartCount } = useCart();
   const router = useRouter();
-  console.log(cart);
+  // console.log(cart);
   return (
     <SafeAreaView>
       <FlatList

@@ -78,6 +78,7 @@ export const useCart = create<CartState>()(
             cartCount: state.cartCount + 1,
           };
         }),
+
       removeCart: (productId: string) =>
         set((state) => {
           const newCart = state.cart.filter(

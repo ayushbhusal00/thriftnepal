@@ -47,7 +47,7 @@ type Product = {
 const AddProduct = () => {
   // Use ProductParams for useLocalSearchParams
   const params = useLocalSearchParams<ProductParams>();
-  console.log("Params:", params); // Log the params object for debuggi
+  // console.log("Params:", params); // Log the params object for debuggi
   const { userProfile } = useUserProfile();
   const generateUploadUrl = useMutation(api.products.generateUploadUrl);
   const addProduct = useMutation(api.products.addProduct);

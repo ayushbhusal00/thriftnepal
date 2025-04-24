@@ -26,7 +26,7 @@ interface UserProfileProps {
 }
 const UserProfile = (props: UserProfileProps) => {
   const { userProfile } = useUserProfile();
-  console.log("user props 1:", props);
+  // console.log("user props 1:", props);
   return (
     <View>
       <View

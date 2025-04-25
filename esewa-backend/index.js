@@ -26,12 +26,12 @@ app.post('/initiate-payment', async (req, res) => {
   const { amount, productId } = req.body;
   const paymentData = {
     amount,
-    failure_url: 'https://thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/failure',
+    failure_url: 'https://thriftnepal.vercel.app/failure',
     product_delivery_charge: '0',
     product_service_charge: '0',
     product_code: esewaConfig.merchantId,
     signed_field_names: 'total_amount,transaction_uuid,product_code',
-    success_url: 'https://thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/success',
+    success_url: 'https://thriftnepal.vercel.app/success',
     tax_amount: '0',
     total_amount: amount,
     transaction_uuid: productId,

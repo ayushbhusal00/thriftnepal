@@ -53,7 +53,13 @@ const PaymentWebView: React.FC = () => {
     const { url } = navState;
 
     // Check if the URL matches the success_url
-    if (url.includes("http://localhost:3000/success")) {
+    //undo here
+    // if (url.includes("http://localhost:3000/success")) {
+    if (
+      url.includes(
+        "thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/success"
+      )
+    ) {
       // Extract query parameters from the URL
       const params = new URLSearchParams(url.split("?")[1]);
       const rawData = params.get("data"); // Get the base64-encoded data string
@@ -81,7 +87,13 @@ const PaymentWebView: React.FC = () => {
     }
 
     // Check if the URL matches the failure_url
-    if (url.includes("http://localhost:3000/failure")) {
+    //undo here
+    // if (url.includes("http://localhost:3000/failure")) {
+    if (
+      url.includes(
+        "thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/failure"
+      )
+    ) {
       // Extract query parameters from the URL
       const params = new URLSearchParams(url.split("?")[1]);
       const rawData = params.get("data");

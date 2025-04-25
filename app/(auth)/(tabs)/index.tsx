@@ -7,36 +7,41 @@ import {
   TouchableOpacity,
   FlatList,
   Button,
+  Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "expo-router";
 import ProductFeed from "@/components/ProductFeed";
+import { BellRinging, ShoppingCart } from "phosphor-react-native";
 // import { handleInitiatePayment } from "@/utils/InitiatePayment";
 
 const Page = () => {
-  const stories = useQuery(api.stories.list);
-  const approvedProducts = useQuery(api.products.getApprovedProducts);
+  //Undo this action
+  // const stories = useQuery(api.stories.list);
+  // const approvedProducts = useQuery(api.products.getApprovedProducts);
+
   const router = useRouter();
   const amount = "1000";
   // console.log("Stories:", stories);
 
-  if (!stories) {
-    return (
-      <SafeAreaView className='flex-1'>
-        <Text>Loading stories...</Text>
-      </SafeAreaView>
-    );
-  }
+  // Undo this action
+  // if (!stories) {
+  //   return (
+  //     <SafeAreaView className='flex-1'>
+  //       <Text>Loading stories...</Text>
+  //     </SafeAreaView>
+  //   );
+  // }
 
-  if (stories.length === 0) {
-    return (
-      <SafeAreaView className='flex-1'>
-        <Text>No stories available</Text>
-      </SafeAreaView>
-    );
-  }
+  // if (stories.length === 0) {
+  //   return (
+  //     <SafeAreaView className='flex-1'>
+  //       <Text>No stories available</Text>
+  //     </SafeAreaView>
+  //   );
+  // }
 
   const renderStoriesSection = () => (
     <View>
@@ -48,7 +53,8 @@ const Page = () => {
       <View className='px-6'>
         <Text className='text-xl font-bold mb-4'>Home</Text>
       </View>
-      <ScrollView
+      {/* Undo this action */}
+      {/* <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
@@ -127,20 +133,48 @@ const Page = () => {
             </TouchableOpacity>
           ))}
         </View>
-      </ScrollView>
+      </ScrollView> */}
     </View>
   );
 
   return (
     <SafeAreaView className='flex-1'>
+      <View className='flex-row justify-between'>
+        <View className='flex-row items-center gap-6 px-4 py-2'>
+          <Image
+            source={{
+              uri: require("@/assets/images/placeholder.jpg"),
+            }}
+            width={64}
+            height={64}
+            style={{ borderRadius: 99, backgroundColor: "#ccc" }}
+          />
+          <Text className='text-2xl font-bold'>Home</Text>
+        </View>
+        <Pressable
+          onPress={() => {
+            router.replace("/cart");
+          }}
+        >
+          <BellRinging size={32} color='#000' />
+        </Pressable>
+        <Pressable
+          onPress={() => {
+            router.replace("/cart");
+          }}
+        >
+          <ShoppingCart size={32} color='#000' />
+        </Pressable>
+      </View>
+
       {/* //This button should only be called through checkout from the cart page */}
       {/* <Button
         title={`Initiate Payment ${amount}`}
         onPress={() => handleInitiatePayment({ amount })}
       /> */}
+      {/* Undo this action */}
 
-      {/* //uncomment code here to view the home page with stories and products */}
-      <FlatList
+      {/* <FlatList
         data={approvedProducts}
         renderItem={({ item }) =>
           item && typeof item.brand === "string" ? (
@@ -157,7 +191,7 @@ const Page = () => {
             }}
           />
         )}
-      />
+      /> */}
     </SafeAreaView>
   );
 };

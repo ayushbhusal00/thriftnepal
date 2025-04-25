@@ -11,7 +11,7 @@ import { Id } from "@/convex/_generated/dataModel";
 const Page = () => {
   const favouritesCount = useFavourites((state) => state.favouritesCount);
   const favourites = useFavourites((state) => state.favourites);
-  const { userProfile } = useUserProfile();
+  // const { userProfile } = useUserProfile();
   // console.log("Favourites: ", favourites);
 
   return (

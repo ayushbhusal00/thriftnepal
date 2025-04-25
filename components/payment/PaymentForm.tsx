@@ -63,7 +63,9 @@ const PaymentForm: React.FC = () => {
     try {
       // TODO: need to make this address public
       const response = await axios.post<{ paymentData: PaymentData }>(
-        "http://localhost:3000/initiate-payment",
+        // "http://localhost:3000/initiate-payment",
+        //undo here
+        "thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/initiate-payment",
         {
           amount,
           productId: generateUniqueId(),

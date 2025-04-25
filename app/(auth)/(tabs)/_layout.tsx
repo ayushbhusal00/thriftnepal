@@ -121,17 +121,6 @@ const Layout = () => {
             },
           }}
         />
-        <Tabs.Screen
-          name='cart'
-          options={{
-            headerShown: false,
-            tabBarIcon({ color, size }) {
-              return (
-                <ShoppingCart size={size} color={color} weight='duotone' />
-              );
-            },
-          }}
-        />
       </Tabs>
 
       {/* Floating Action Buttons */}

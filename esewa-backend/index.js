@@ -26,12 +26,12 @@ app.post('/initiate-payment', async (req, res) => {
   const { amount, productId } = req.body;
   const paymentData = {
     amount,
-    failure_url: 'http://localhost:3000/failure',
+    failure_url: 'https://thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/failure',
     product_delivery_charge: '0',
     product_service_charge: '0',
     product_code: esewaConfig.merchantId,
     signed_field_names: 'total_amount,transaction_uuid,product_code',
-    success_url: 'http://localhost:3000/success',
+    success_url: 'https://thriftnepal-mdsgmn2j0-ayushbhusal00s-projects.vercel.app/success',
     tax_amount: '0',
     total_amount: amount,
     transaction_uuid: productId,
@@ -54,7 +54,5 @@ app.get('/failure', (req, res) => {
   res.json({ message: 'Payment failed', data: req.query });
 });
 
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+// Export for Vercel
+module.exports = app;

@@ -11,26 +11,38 @@ export const User = {
   username: v.union(v.string(), v.null()),
 };
 
+export const Story = {
+  userId: v.id("users"),
+  imageUrl: v.array(v.id("_storage")), // Multiple images
+};
+
 export const Product = {
+  images: v.array(v.id("_storage")),
   title: v.string(),
+  category: v.string(),
   description: v.string(),
+  size: v.string(),
+  condition: v.string(),
   price: v.number(),
-  brand: v.string(),
-  images: v.array(v.id("_storage")), // Multiple images
-  status: v.union(
-    v.literal("pending"),
-    v.literal("approved"),
-    v.literal("rejected")
-  ),
-  rating: v.number(),
+  approved: v.optional(v.boolean()),
+  brand: v.optional(v.string()),
+  fabrics: v.optional(v.string()),
+  highlights: v.optional(v.string()),
+  userId: v.id("users"),
+  sold: v.optional(v.boolean()), // New field to track if the product is sold
+};
+
+// A transaction schema with "transaction_uuid": "ntzzyzd6q", cartItems:[Product]
+export const Transaction = {
+  transaction_uuid: v.string(),
+  cartItems: v.array(v.id("products")),
+  userId: v.id("users"),
+  status: v.string(), // New field to track the status of the transaction
 };
 
 export default defineSchema({
-  tasks: defineTable({
-    _id: v.id("tasks"),
-    text: v.string(),
-    isCompleted: v.optional(v.boolean()),
-  }),
   users: defineTable(User),
-  products: defineTable(Product),
+  products: defineTable(Product).index("by_user", ["userId"]),
+  stories: defineTable(Story).index("by_user", ["userId"]),
+  transactions: defineTable(Transaction).index("by_user", ["userId"]),
 });

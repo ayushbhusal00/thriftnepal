@@ -1,12 +1,3 @@
-import { View, Text } from "react-native";
-import React from "react";
+export { default } from "@/components/Profile";
 
-const Page = () => {
-  return (
-    <View>
-      <Text>Profile</Text>
-    </View>
-  );
-};
-
-export default Page;
+// export { default } from "../../../components/payment/index";

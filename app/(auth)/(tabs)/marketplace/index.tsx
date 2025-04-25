@@ -1,39 +1,29 @@
 import { View, Text, FlatList } from "react-native";
 import React from "react";
-import { useFavourites } from "@/utils/Store";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import Products from "@/components/Products";
 import { Id } from "@/convex/_generated/dataModel";
+import Products from "@/components/Products";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Page = () => {
-  const favouritesCount = useFavourites((state) => state.favouritesCount);
-  const favourites = useFavourites((state) => state.favourites);
-  // const { userProfile } = useUserProfile();
-  // console.log("Favourites: ", favourites);
-
+  const { userProfile } = useUserProfile();
   return (
     <SafeAreaView>
       <View className='px-5'>
         <Text className='text-md font-regular color-neutral-500 mb-4'>
-          {favouritesCount} Favourite item
+          Your Listings
         </Text>
       </View>
       <FlatList
-        data={favourites}
+        data={useQuery(api.products.getMyProducts, {
+          userId: userProfile?._id ?? ("" as Id<"users">),
+        })}
         renderItem={({ item }) => {
           return item && typeof item.brand === "string" ? (
             <View className='bg-white rounded-lg border-1 border-[#00000020] mx-4 '>
-              <Products
-                item={{
-                  ...item,
-                  _id: item._id as Id<"products">,
-                  userId: item.userId as Id<"users">,
-                  brand: item.brand || "",
-                }}
-              />
+              <Products item={{ ...item }} />
             </View>
           ) : null;
         }}

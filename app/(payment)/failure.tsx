@@ -1,0 +1,74 @@
+import React from "react";
+import { View, Text, StyleSheet, Pressable } from "react-native";
+import { useLocalSearchParams, router } from "expo-router";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+const FailurePage: React.FC = () => {
+  const { message, data } = useLocalSearchParams<{
+    message: string;
+    data: string;
+  }>();
+  const updateTransaction = useMutation(api.transactions.updateTransaction);
+  const parsedData = data ? JSON.parse(data) : {};
+  console.log(parsedData); // Add this line to log the parsedData object
+
+  const updateTransactionStatus = (
+    transaction_uuid: string,
+    status: "success" | "failed"
+  ) => {
+    updateTransaction({
+      transaction_uuid,
+      status,
+    });
+  };
+
+  updateTransactionStatus(parsedData.transaction_uuid, "failed");
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>Payment Status</Text>
+      <Text style={styles.message}>{message || "Payment Failed!"}</Text>
+      <Text style={styles.details}>
+        Transaction UUID: {parsedData.transaction_uuid || "N/A"}
+      </Text>
+      <Text style={styles.details}>
+        Reason: {parsedData.reason || "Unknown error"}
+      </Text>
+      <Pressable
+        style={{
+          backgroundColor: "green",
+          padding: 10,
+          borderRadius: 5,
+          marginTop: 20,
+        }}
+        onPress={() => {
+          router.replace("/");
+        }}
+      >
+        <Text style={{ color: "white", textAlign: "center" }}>
+          Back to Home
+        </Text>
+      </Pressable>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
+  message: {
+    fontSize: 18,
+    marginBottom: 20,
+    textAlign: "center",
+    color: "red",
+  },
+  details: { fontSize: 16, marginBottom: 10, textAlign: "center" },
+});
+
+export default FailurePage;

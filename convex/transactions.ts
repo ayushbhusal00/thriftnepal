@@ -47,3 +47,15 @@ export const getTransactionById = query({
       .first();
   },
 });
+
+export const getTransactionsByUserId = query({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("transactions")
+      .filter((q) => q.eq(q.field("userId"), args.userId))
+      .collect();
+  },
+});

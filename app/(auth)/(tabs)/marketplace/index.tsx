@@ -129,7 +129,7 @@ const Page = () => {
         renderItem={({ item }) => {
           return item && typeof item.brand === "string" ? (
             <View className='bg-white rounded-lg border-1 border-[#00000020] mx-4 '>
-              <Products item={{ ...item }} />
+              <Products item={item as any} />
             </View>
           ) : null;
         }}

@@ -14,7 +14,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "expo-router";
 import ProductFeed from "@/components/ProductFeed";
-import { BellRinging, ShoppingCart } from "phosphor-react-native";
+import { BellRinging, Faders, ShoppingCart } from "phosphor-react-native";
 // import { handleInitiatePayment } from "@/utils/InitiatePayment";
 
 const Page = () => {
@@ -40,7 +40,7 @@ const Page = () => {
         "https://plus.unsplash.com/premium_photo-1727265736334-16827679f453",
     },
   ];
-  // const approvedProducts = useQuery(api.products.getApprovedProducts);
+  // const approvedProducts = useQuery(api.products.getApprovedAndNotSoldProducts);
   const approvedProducts = [
     {
       _creationTime: 1745285752835.5688,
@@ -214,15 +214,23 @@ const Page = () => {
           </Pressable>
         </View>
       </View>
-      <View>
+      <View className='flex-row gap-4  mx-5 mb-6'>
         <TextInput
           placeholder='Search for products'
           placeholderTextColor='#00000060'
-          className='flex-row items-center gap-4 p-4 mx-6 mb-6 bg-neutral-200 rounded-lg'
+          className='flex-row items-center flex-1 gap-4 p-4 bg-neutral-200 rounded-lg'
           style={{
             marginHorizontal: 12,
           }}
         />
+        <TouchableOpacity
+          className='bg-neutral-200 rounded-lg p-4'
+          onPress={() => {
+            console.log("Enable Filters");
+          }}
+        >
+          <Faders size={24} />
+        </TouchableOpacity>
       </View>
 
       {/* Undo this action */}

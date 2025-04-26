@@ -35,12 +35,14 @@ export const addProduct = mutation({
   },
 });
 
-export const getApprovedProducts = query({
+export const getApprovedAndNotSoldProducts = query({
   args: {},
   handler: async (ctx) => {
     const products = await ctx.db
       .query("products")
-      .filter((q) => q.eq(q.field("approved"), true))
+      .filter((q) =>
+        q.and(q.eq(q.field("approved"), true), q.eq(q.field("sold"), false))
+      )
       .collect();
     return Promise.all(
       products.map(async (product) => {

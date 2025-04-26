@@ -4,7 +4,7 @@
     "slug": "thriftnepal",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/logo.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -30,16 +30,19 @@
       [
         "expo-router",
         {
-          "origin": "https://thriftnepal.com"
+          "origin": "https://thrift232323nepal.com"
         }
       ],
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#EE2737",
+          "image": "./assets/images/logo-bw.png",
+          "dark": {
+            "image": "./assets/images/logo-bw.png",
+            "backgroundColor": "#2A2A2A"
+          },
+          "imageWidth": 200
         }
       ],
       [

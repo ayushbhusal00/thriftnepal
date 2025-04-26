@@ -7,6 +7,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@clerk/clerk-expo";
 import { router } from "expo-router";
 import UserProfile from "./UserProfile";
+import {
+  BookOpenText,
+  CaretRight,
+  Lamp,
+  Package,
+  UserCircle,
+} from "phosphor-react-native";
 
 type ProfileProps = {
   userId?: Id<"users">;
@@ -65,6 +72,58 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
           </TouchableOpacity>
         </View>
         {userProfile && <UserProfile props={userProfile as any} />}
+      </View>
+      <View className='bg-white flex-col'>
+        <Text
+          className='mx-6 py-6 color-[grey]'
+          style={{ marginHorizontal: 10, marginVertical: 5, color: "grey" }}
+        >
+          ACCOUNT
+        </Text>
+        <TouchableOpacity onPress={() => console.log("Profile Data")}>
+          <View className='p-6 flex-row justify-between items-center'>
+            <View className='flex-row gap-2 items-center '>
+              <UserCircle size={24} />
+              <Text className='text-lg'>Profile Data</Text>
+            </View>
+            <CaretRight size={24} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push(`/(auth)/MyOrders`)}>
+          <View className='p-6 flex-row justify-between items-center'>
+            <View className='flex-row gap-2 items-center '>
+              <Package size={24} />
+              <Text className='text-lg'>Your Orders</Text>
+            </View>
+            <CaretRight size={24} />
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View className='bg-white flex-col'>
+        <Text
+          className='mx-6 py-6 color-[grey]'
+          style={{ marginHorizontal: 10, marginVertical: 5, color: "grey" }}
+        >
+          PREFERENCE
+        </Text>
+        <TouchableOpacity onPress={() => console.log("Change Language")}>
+          <View className='p-6 flex-row justify-between items-center'>
+            <View className='flex-row gap-2 items-center '>
+              <BookOpenText size={24} />
+              <Text className='text-lg'>Language</Text>
+            </View>
+            <CaretRight size={24} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => console.log("Change Language")}>
+          <View className='p-6 flex-row justify-between items-center'>
+            <View className='flex-row gap-2 items-center '>
+              <Lamp size={24} />
+              <Text className='text-lg'>App Theme</Text>
+            </View>
+            <CaretRight size={24} />
+          </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

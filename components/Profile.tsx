@@ -13,7 +13,18 @@ type ProfileProps = {
   showBackButton?: boolean;
 };
 const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
-  const { userProfile } = useUserProfile();
+  // const { userProfile } = useUserProfile();
+  const userProfile = {
+    _creationTime: 1745075425708.771,
+    _id: "jd777hjdbxa16v8yhn33xsr52s7ebzm8",
+    clerkId: "user_2vx8aDFqJO7hHUmklYe4DenhCHg",
+    email: "ayushbhusal00@gmail.com",
+    first_name: "Ayush",
+    imageUrl:
+      "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18ydng4YUMxdDYxbmxBRGJuRlU5S0N0NWZQekkifQ",
+    last_name: "Bhusal",
+    username: "Ayush Bhusal",
+  };
   const { top } = useSafeAreaInsets();
   const { signOut } = useAuth();
 
@@ -53,7 +64,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             <Ionicons name='log-out-outline' size={24} color='black' />
           </TouchableOpacity>
         </View>
-        {userProfile && <UserProfile props={userProfile} />}
+        {userProfile && <UserProfile props={userProfile as any} />}
       </View>
     </View>
   );

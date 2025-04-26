@@ -12,6 +12,7 @@ import {
 } from "phosphor-react-native";
 
 const Page = () => {
+  //Once requested pass the whole product item in params
   const { id } = useLocalSearchParams(); // Extracts the `id` from the route
   // console.log(id); // Prints the `id` to the console
   const product = useQuery(api.products.getProductById, {

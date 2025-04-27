@@ -1,7 +1,8 @@
 import { View, Text, Image } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 interface UserProfileProps {
   props: {
@@ -16,10 +17,11 @@ interface UserProfileProps {
   };
 }
 const UserProfile = (props: UserProfileProps) => {
+  const { colors } = useContext(ThemeContext);
   const { userProfile } = useUserProfile();
   // console.log("user props 1:", props);
   return (
-    <View className='bg-white'>
+    <View style={{ backgroundColor: colors.background.secondary }}>
       <View
         style={{
           display: "flex",
@@ -38,7 +40,13 @@ const UserProfile = (props: UserProfileProps) => {
           style={{ borderRadius: 50 }}
         />
         <View>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              color: colors.text.primary,
+            }}
+          >
             {userProfile?.first_name + " " + userProfile?.last_name}
           </Text>
 
@@ -52,7 +60,13 @@ const UserProfile = (props: UserProfileProps) => {
               marginTop: 8,
             }}
           >
-            <Text style={{ fontSize: 14, fontWeight: "300" }}>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "300",
+                color: colors.text.secondary,
+              }}
+            >
               {userProfile?.email}
             </Text>
           </View>

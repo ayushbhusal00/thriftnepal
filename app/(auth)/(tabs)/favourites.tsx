@@ -1,23 +1,31 @@
 import { View, Text, FlatList } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useFavourites } from "@/utils/Store";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import Products from "@/components/Products";
+import Products from "@/app/components/Products";
 import { Id } from "@/convex/_generated/dataModel";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const Page = () => {
+  const { colors } = useContext(ThemeContext);
   const favouritesCount = useFavourites((state) => state.favouritesCount);
   const favourites = useFavourites((state) => state.favourites);
   // const { userProfile } = useUserProfile();
   // console.log("Favourites: ", favourites);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      className='flex-1'
+      style={{ backgroundColor: colors.background.primary }}
+    >
       <View className='px-5'>
-        <Text className='text-md font-regular color-neutral-500 mb-4'>
+        <Text
+          className='text-md font-regular mb-4'
+          style={{ color: colors.text.secondary }}
+        >
           {favouritesCount} Favourite item
         </Text>
       </View>
@@ -25,7 +33,9 @@ const Page = () => {
         data={favourites}
         renderItem={({ item }) => {
           return item && typeof item.brand === "string" ? (
-            <View className='bg-white rounded-lg border-1 border-[#00000020] mx-4 '>
+            <View
+              className={`bg-[${colors.background.secondary}] rounded-lg border-1 border-[${colors.background.border}] mx-4 `}
+            >
               <Products
                 item={{
                   ...item,

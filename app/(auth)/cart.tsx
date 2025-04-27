@@ -10,7 +10,7 @@ import {
   Image,
 } from "react-native";
 import React from "react";
-import SelectProduct from "@/components/SelectProduct";
+import SelectProduct from "@/app/components/SelectProduct";
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "expo-router";
 import { handleInitiatePayment } from "@/utils/InitiatePayment";

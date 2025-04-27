@@ -1,9 +1,10 @@
 import { View, Text, Image, Button, Pressable } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
 import { Check, Hourglass, ShareFat } from "phosphor-react-native";
 import { useRouter } from "expo-router";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 interface Product {
   _id: Id<"products">;
@@ -18,6 +19,7 @@ interface Product {
   approved: boolean;
 }
 const Products = ({ item }: { item: Product }) => {
+  const { colors } = useContext(ThemeContext);
   const router = useRouter();
   // console.log(item.title, item.sold, item.approved);
   return (
@@ -80,12 +82,22 @@ const Products = ({ item }: { item: Product }) => {
               }}
             >
               <Text
-                style={{ fontWeight: "700", fontSize: 14 }}
+                style={{
+                  fontWeight: "500",
+                  fontSize: 16,
+                  color: colors.text.primary,
+                }}
                 numberOfLines={2}
               >
                 {item.title}
               </Text>
-              <Text style={{ fontWeight: "500", fontSize: 14, color: "grey" }}>
+              <Text
+                style={{
+                  fontWeight: "500",
+                  fontSize: 14,
+                  color: colors.text.secondary,
+                }}
+              >
                 USD {item.price}
               </Text>
               <View

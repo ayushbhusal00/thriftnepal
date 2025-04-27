@@ -13,11 +13,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "expo-router";
-import ProductFeed from "@/components/ProductFeed";
+import ProductFeed from "@/app/components/ProductFeed";
 import { BellRinging, Faders, ShoppingCart } from "phosphor-react-native";
+import { ThemeContext } from "@/providers/ThemeProvider";
+import { useContext } from "react";
 // import { handleInitiatePayment } from "@/utils/InitiatePayment";
-
+import { themes } from "@/utils/color-theme";
 const Page = () => {
+  const { colors, theme } = useContext(ThemeContext);
+
   //Undo this action
   // const stories = useQuery(api.stories.list);
   const stories = [
@@ -174,9 +178,9 @@ const Page = () => {
   }
 
   const renderStoriesSection = () => (
-    <View>
+    <View className='bg-background-primary dark:bg-background-primary-dark'>
       <View className='flex-row justify-between items-center px-6 py-4'>
-        <View className='flex-row items-center gap-6'>
+        <View className='flex-row items-center gap-4'>
           <Image
             source={require("@/assets/images/placeholder.jpg")}
             style={{
@@ -185,51 +189,55 @@ const Page = () => {
               borderRadius: 99,
             }}
           />
-          <Text className='text-xl font-bold'>Hi, Ayush</Text>
+          <Text className='text-h3 text-text-primary dark:text-text-primary-dark'>
+            Hi, Ayush
+          </Text>
         </View>
         <View className='flex-row gap-4'>
           <Pressable
             onPress={() => {
               router.replace("/cart");
             }}
-            style={{
-              padding: 8,
-              borderRadius: 12,
-              backgroundColor: "#FFFFFF",
-            }}
+            className='p-2 rounded-md bg-background-secondary dark:bg-background-secondary-dark relative'
           >
-            <BellRinging size={32} color='#000' />
+            <BellRinging
+              size={24}
+              weight='regular'
+              color={colors.background.subtle}
+            />
+            <View className='bg-brand-default dark:bg-brand-default-dark w-2 h-2 rounded-md absolute top-2 right-2'></View>
           </Pressable>
           <Pressable
             onPress={() => {
               router.replace("/cart");
             }}
-            style={{
-              padding: 8,
-              borderRadius: 12,
-              backgroundColor: "#FFFFFF",
-            }}
+            className='p-2 rounded-md bg-background-secondary dark:bg-background-secondary-dark'
           >
-            <ShoppingCart size={32} color='#000' />
+            <ShoppingCart
+              size={24}
+              weight='regular'
+              color={colors.background.subtle}
+            />
+            <View className='bg-brand-default dark:bg-brand-default-dark w-2 h-2 rounded-md absolute top-2 right-2'></View>
           </Pressable>
         </View>
       </View>
-      <View className='flex-row gap-4  mx-5 mb-6'>
+      <View className='flex-row mx-3 mb-6'>
         <TextInput
           placeholder='Search for products'
-          placeholderTextColor='#00000060'
-          className='flex-row items-center flex-1 gap-4 p-4 bg-neutral-200 rounded-lg'
+          placeholderTextColor={colors.text.secondary}
+          className='flex-row items-center flex-1 gap-4 p-4 bg-background-secondary dark:bg-background-secondary-dark border-hairline border-background-border dark:border-background-border-dark rounded-lg'
           style={{
             marginHorizontal: 12,
           }}
         />
         <TouchableOpacity
-          className='bg-neutral-200 rounded-lg p-4'
+          className='bg-background-secondary dark:bg-background-secondary-dark border-hairline border-background-border dark:border-background-border-dark rounded-lg p-4'
           onPress={() => {
             console.log("Enable Filters");
           }}
         >
-          <Faders size={24} />
+          <Faders size={24} color={colors.background.subtle} />
         </TouchableOpacity>
       </View>
 
@@ -263,7 +271,7 @@ const Page = () => {
                 {item.storyImageUrls?.[0] ? (
                   <Image
                     source={{ uri: item.storyImageUrls[0] }}
-                    className='rounded-lg shadow-md border border-1 border-neutral-200'
+                    className={`rounded-lg shadow-md`}
                     style={{
                       width: 100,
                       height: 140,
@@ -281,7 +289,7 @@ const Page = () => {
                 </Text>
                 {item.userImageUrl ? (
                   <Image
-                    source={{ uri: item.userImageUrl }}
+                    source={{ uri: item.userImageUrl }} // Fixed: Use uri directly instead of require()
                     className='rounded-lg shadow-md border border-1 border-purple-200'
                     style={{
                       width: 32,
@@ -318,7 +326,9 @@ const Page = () => {
   );
 
   return (
-    <SafeAreaView className='flex-1'>
+    <SafeAreaView
+      className={`flex-1 bg-${theme === "light" ? "white" : "black"}`}
+    >
       <FlatList
         data={approvedProducts}
         renderItem={({ item }) =>
@@ -332,7 +342,7 @@ const Page = () => {
           <View
             style={{
               height: 1,
-              backgroundColor: "#ccc",
+              backgroundColor: colors.background.border,
             }}
           />
         )}

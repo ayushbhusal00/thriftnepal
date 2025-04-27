@@ -11,23 +11,28 @@ import {
   ShoppingCart,
 } from "phosphor-react-native";
 import * as Haptics from "expo-haptics";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
 } from "react-native-reanimated";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const Layout = () => {
+  const { colors } = useContext(ThemeContext);
   const [fabsVisible, setFabsVisible] = useState(false);
   const scale = useSharedValue(0); // For animation
 
   const CreateIcon = () => {
     return (
       <View
-        className={`rounded-full p-2 absolute w-20 h-20 items-center justify-center bg-[#AD5691]`}
+        className={`rounded-full p-2 absolute w-20 h-20 items-center justify-center`}
+        style={{
+          backgroundColor: colors.brand.default,
+        }}
       >
-        <PlusSquare size={32} color={"white"} weight='duotone' />
+        <PlusSquare size={32} color={colors.text.onColor} weight='duotone' />
       </View>
     );
   };
@@ -57,13 +62,13 @@ const Layout = () => {
     <>
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: "#AD5691",
-          tabBarInactiveTintColor: "gray",
+          tabBarActiveTintColor: colors.brand.default,
+          tabBarInactiveTintColor: colors.background.subtle,
           tabBarShowLabel: false,
-          tabBarStyle: { backgroundColor: "white" },
+          tabBarStyle: { backgroundColor: colors.background.secondary },
           tabBarItemStyle: {
-            borderTopWidth: 2,
-            borderTopColor: "transparent",
+            borderTopWidth: 0,
+            borderTopColor: colors.background.border,
           },
         }}
       >
@@ -128,18 +133,42 @@ const Layout = () => {
         <View style={styles.fabContainer}>
           <Animated.View style={[styles.fab, animatedStyle]}>
             <TouchableOpacity
-              style={styles.fabButton}
+              style={{
+                borderRadius: 50,
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                elevation: 5,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 3,
+                backgroundColor: colors.accent.default,
+              }}
               onPress={() => handleFABOption("camera")}
             >
-              <Camera size={24} color='white' weight='duotone' />
+              <Camera size={24} color={colors.text.onColor} weight='duotone' />
             </TouchableOpacity>
           </Animated.View>
           <Animated.View style={[styles.fab, animatedStyle, styles.fabGallery]}>
             <TouchableOpacity
-              style={styles.fabButton}
+              style={{
+                borderRadius: 50,
+                width: 50,
+                height: 50,
+                justifyContent: "center",
+                alignItems: "center",
+                elevation: 5,
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.3,
+                shadowRadius: 3,
+                backgroundColor: colors.accent.default,
+              }}
               onPress={() => handleFABOption("gallery")}
             >
-              <Image size={24} color='white' weight='duotone' />
+              <Image size={24} color={colors.text.onColor} weight='duotone' />
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -164,19 +193,7 @@ const styles = StyleSheet.create({
   fabGallery: {
     // bottom: 60, // Offset for second FAB
   },
-  fabButton: {
-    backgroundColor: "#AD5691",
-    borderRadius: 50,
-    width: 50,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-  },
+  fabButton: {},
 });
 
 export default Layout;

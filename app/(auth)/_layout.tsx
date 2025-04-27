@@ -3,10 +3,23 @@ import { router, Stack } from "expo-router";
 import { Touchable, TouchableOpacity } from "react-native";
 import "@/styles/global.css";
 import { CaretLeft } from "phosphor-react-native";
+import { useContext } from "react";
+import { ThemeContext } from "@/providers/ThemeProvider";
 const Layout = () => {
+  const { colors } = useContext(ThemeContext);
+
   return (
-    <Stack>
-      <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: colors.background.secondary },
+      }}
+    >
+      <Stack.Screen
+        name='(tabs)'
+        options={{
+          headerShown: false,
+        }}
+      />
       <Stack.Screen name='StoriesViewer' options={{ headerShown: false }} />
       <Stack.Screen
         name='paymentConfirmation'

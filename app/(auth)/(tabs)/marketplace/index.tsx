@@ -1,13 +1,15 @@
 import { View, Text, FlatList } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Products from "@/components/Products";
+import Products from "@/app/components/Products";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const Page = () => {
+  const { colors } = useContext(ThemeContext);
   // const { userProfile } = useUserProfile();
   const userProfile = {
     _creationTime: 1745075425708.771,
@@ -118,9 +120,14 @@ const Page = () => {
   ];
 
   return (
-    <SafeAreaView>
+    <SafeAreaView
+      style={{ backgroundColor: colors.background.primary, flex: 1 }}
+    >
       <View className='px-5'>
-        <Text className='text-md font-regular color-neutral-500 mb-4'>
+        <Text
+          className={`text-md font-regular mb-4`}
+          style={{ color: colors.text.secondary }}
+        >
           Your Listings
         </Text>
       </View>
@@ -128,7 +135,13 @@ const Page = () => {
         data={myProducts}
         renderItem={({ item }) => {
           return item && typeof item.brand === "string" ? (
-            <View className='bg-white rounded-lg border-1 border-[#00000020] mx-4 '>
+            <View
+              style={{
+                backgroundColor: colors.background.secondary,
+                borderColor: colors.background.border,
+              }}
+              className={`rounded-lg border-1 mx-4`}
+            >
               <Products item={item as any} />
             </View>
           ) : null;
@@ -141,7 +154,7 @@ const Page = () => {
             style={{
               height: 1,
               marginHorizontal: 16,
-              backgroundColor: "#ccc",
+              backgroundColor: colors.background.border,
             }}
           />
         )}

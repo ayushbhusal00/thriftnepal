@@ -21,7 +21,9 @@ import {
 } from "phosphor-react-native";
 import { router } from "expo-router";
 import { useCart, useFavourites } from "@/utils/Store";
-
+import { themes } from "@/utils/color-theme";
+import { ThemeContext } from "@/providers/ThemeProvider";
+import { useContext } from "react";
 interface Product {
   _id: string;
   title: string;
@@ -40,6 +42,7 @@ interface Product {
 }
 
 const ProductFeed = ({ item }: { item: Product }) => {
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const { addFavourites, favourites } = useFavourites();
   const user = useQuery(api.users.getUserById, { userId: item.userId });
 
@@ -62,7 +65,14 @@ const ProductFeed = ({ item }: { item: Product }) => {
   // console.log("product item:", item);
   return (
     <Pressable
-      style={{ width: "100%", flex: 1 }}
+      style={{
+        width: "100%",
+        flex: 1,
+        backgroundColor:
+          theme === "light"
+            ? themes.light.background.secondary
+            : themes.dark.background.secondary,
+      }}
       onPress={() => {
         router.push(`/product/${item._id}`);
       }}
@@ -89,16 +99,32 @@ const ProductFeed = ({ item }: { item: Product }) => {
                     source={{
                       uri: imageUrl,
                     }}
-                    className='w-10 h-10 rounded-full border border-gray-300'
+                    className='w-10 h-10 rounded-full'
                     accessibilityLabel={`Profile picture for ${item.title}`}
                   />
                 )}
                 <View>
-                  <Text style={{ fontWeight: "700", fontSize: 14 }}>
+                  <Text
+                    style={{
+                      fontWeight: "700",
+                      fontSize: 14,
+                      color:
+                        theme === "light"
+                          ? themes.light.text.primary
+                          : themes.dark.text.primary,
+                    }}
+                  >
                     {user?.username || "Anonymous"}
                   </Text>
                   <Text
-                    style={{ fontWeight: "400", fontSize: 14, color: "grey" }}
+                    style={{
+                      fontWeight: "400",
+                      fontSize: 14,
+                      color:
+                        theme === "light"
+                          ? themes.light.text.secondary
+                          : themes.dark.text.secondary,
+                    }}
                   >
                     Posted 5 days ago
                     {/* {item.createdAt.toLocaleDateString()} */}
@@ -110,17 +136,23 @@ const ProductFeed = ({ item }: { item: Product }) => {
               style={{
                 flex: 1,
                 gap: 12,
-                borderWidth: 1,
-                borderColor: "#ccc",
+
                 borderRadius: 12,
                 position: "relative",
               }}
             >
               {item.images.map((uri, index) => (
                 <Image
-                  style={{ borderRadius: 10 }}
+                  style={{
+                    borderRadius: 10,
+                    borderWidth: StyleSheet.hairlineWidth,
+                    borderColor:
+                      theme === "light"
+                        ? themes.light.background.primary
+                        : themes.dark.background.primary,
+                  }}
                   key={index}
-                  source={{ uri: item.imageUrls[index] }}
+                  source={{ uri: item.imageUrls[index] }} // Fixed: Use uri directly instead of require()
                   className='rounded-lg overflow-clip w-full'
                   accessibilityLabel={`Image for product ${item.title}`}
                   height={200}
@@ -158,12 +190,32 @@ const ProductFeed = ({ item }: { item: Product }) => {
                 <Pressable onPress={addProductToFavourites}>
                   <Heart
                     size={24}
-                    color={isFavourite ? "red" : "grey"}
+                    color={
+                      isFavourite
+                        ? themes.light.brand.default
+                        : theme === "light"
+                          ? themes.light.text.secondary
+                          : themes.dark.text.secondary
+                    }
                     weight={isFavourite ? "fill" : "regular"}
                   />
                 </Pressable>
-                <ChatTeardrop size={24} color='grey' />
-                <ShareFat size={24} color='grey' />
+                <ChatTeardrop
+                  size={24}
+                  color={
+                    theme === "light"
+                      ? themes.light.text.secondary
+                      : themes.dark.text.secondary
+                  }
+                />
+                <ShareFat
+                  size={24}
+                  color={
+                    theme === "light"
+                      ? themes.light.text.secondary
+                      : themes.dark.text.secondary
+                  }
+                />
               </View>
               {!item.sold && (
                 <View style={styles.buttonContainer}>
@@ -171,12 +223,36 @@ const ProductFeed = ({ item }: { item: Product }) => {
                     onPress={() => {
                       addItemToCart();
                     }}
-                    style={[styles.button, styles.blackButton]}
+                    // style={[styles.button, styles.blackButton]}
+                    style={{
+                      backgroundColor:
+                        theme === "light"
+                          ? themes.light.background.contrast
+                          : themes.dark.background.contrast,
+                      paddingVertical: 8,
+                      paddingHorizontal: 16,
+                      justifyContent: "center",
+                      alignItems: "center",
+                      elevation: 5,
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 1 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 2,
+                    }}
                   >
                     {/* Inner shadow overlay */}
                     <View style={styles.innerShadow} />
                     <View>
-                      <Text style={styles.whiteText}>Add to Cart</Text>
+                      <Text
+                        style={{
+                          color:
+                            theme === "light"
+                              ? themes.light.text.onColor
+                              : themes.dark.text.onColor,
+                        }}
+                      >
+                        Add to Cart
+                      </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
@@ -184,11 +260,27 @@ const ProductFeed = ({ item }: { item: Product }) => {
             </View>
             <View className='flex-row justify-center items-center'>
               <View className=' flex-col flex-1 gap-2 '>
-                <Text style={{ fontWeight: "500", fontSize: 14 }}>
+                <Text
+                  style={{
+                    fontWeight: "500",
+                    fontSize: 14,
+                    color:
+                      theme === "light"
+                        ? themes.light.text.primary
+                        : themes.dark.text.primary,
+                  }}
+                >
                   {item.title}
                 </Text>
                 <Text
-                  style={{ fontWeight: "400", fontSize: 14, color: "grey" }}
+                  style={{
+                    fontWeight: "400",
+                    fontSize: 14,
+                    color:
+                      theme === "light"
+                        ? themes.light.text.secondary
+                        : themes.dark.text.secondary,
+                  }}
                 >
                   Bags | {item.brand}
                 </Text>
@@ -196,14 +288,25 @@ const ProductFeed = ({ item }: { item: Product }) => {
               <View
                 className=' px-2 py-1 bg-blue-200'
                 style={{
-                  backgroundColor: "#DFEDF4",
+                  backgroundColor:
+                    theme === "light"
+                      ? themes.light.accent.interactive
+                      : themes.dark.accent.interactive,
                   borderRadius: 4,
                   paddingHorizontal: 4,
                   paddingVertical: 2,
                   marginLeft: 10,
                 }}
               >
-                <Text style={{ fontWeight: 700, color: "#314B57" }}>
+                <Text
+                  style={{
+                    fontWeight: 700,
+                    color:
+                      theme === "light"
+                        ? themes.light.accent.text
+                        : themes.dark.accent.text,
+                  }}
+                >
                   ₹ {item.price}
                 </Text>
               </View>
@@ -222,26 +325,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
   },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-  },
+  button: {},
   whiteButton: {
     backgroundColor: "#FFFFFF",
   },
   redButton: {
     backgroundColor: "#FF0000",
   },
-  blackButton: {
-    backgroundColor: "#1C2526",
-  },
+
   iconButton: {
     padding: 10, // Smaller padding for icon button
     width: 50, // Fixed width for square button

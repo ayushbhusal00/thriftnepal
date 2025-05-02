@@ -1,6 +1,8 @@
-// convex/product.ts
 import { mutation, query } from "./_generated/server";
 import { v } from "convex/values";
+
+// Maximum allowed image size in bytes (1 MB)
+const MAX_IMAGE_SIZE = 1024 * 1024;
 
 // Generate upload URLs for client-side image uploads
 export const generateUploadUrl = mutation({
@@ -10,7 +12,7 @@ export const generateUploadUrl = mutation({
   },
 });
 
-// Add product with storage IDs
+// Add product with storage IDs and size validation
 export const addProduct = mutation({
   args: {
     images: v.array(v.id("_storage")),
@@ -26,26 +28,44 @@ export const addProduct = mutation({
     userId: v.id("users"),
   },
   handler: async (ctx, args) => {
+    // Validate image sizes
+    for (const storageId of args.images) {
+      const metadata = await ctx.storage.getMetadata(storageId);
+      if (!metadata) {
+        throw new Error(`Image not found for storage ID: ${storageId}`);
+      }
+      if (metadata.size > MAX_IMAGE_SIZE) {
+        throw new Error(
+          `Image size exceeds limit of ${MAX_IMAGE_SIZE / 1024} KB`
+        );
+      }
+    }
+
     return await ctx.db.insert("products", {
       ...args,
       userId: args.userId,
-      approved: false, // Default to false until approved
-      sold: false, // Default to false until sold
+      approved: false,
+      sold: false,
     });
   },
 });
 
+// Paginated query for approved and not sold products
 export const getApprovedAndNotSoldProducts = query({
-  args: {},
-  handler: async (ctx) => {
-    const products = await ctx.db
+  args: {
+    cursor: v.optional(v.union(v.string(), v.null())),
+    pageSize: v.number(),
+  },
+  handler: async (ctx, args) => {
+    const result = await ctx.db
       .query("products")
       .filter((q) =>
         q.and(q.eq(q.field("approved"), true), q.eq(q.field("sold"), false))
       )
-      .collect();
-    return Promise.all(
-      products.map(async (product) => {
+      .paginate({ cursor: args.cursor ?? null, numItems: args.pageSize });
+
+    const products = await Promise.all(
+      result.page.map(async (product) => {
         const imageUrls = await Promise.all(
           product.images.map((storageId) => ctx.storage.getUrl(storageId))
         );
@@ -55,8 +75,15 @@ export const getApprovedAndNotSoldProducts = query({
         };
       })
     );
+
+    return {
+      products,
+      isDone: !result.continueCursor,
+      nextCursor: result.continueCursor || null,
+    };
   },
 });
+
 export const getProducts = query({
   args: {},
   handler: async (ctx) => {
@@ -162,6 +189,21 @@ export const updateProduct = mutation({
 
     if (product.userId !== args.userId) {
       throw new Error("Can only update your own products");
+    }
+
+    // Validate image sizes if new images are provided
+    if (updates.images) {
+      for (const storageId of updates.images) {
+        const metadata = await ctx.storage.getMetadata(storageId);
+        if (!metadata) {
+          throw new Error(`Image not found for storage ID: ${storageId}`);
+        }
+        if (metadata.size > MAX_IMAGE_SIZE) {
+          throw new Error(
+            `Image size exceeds limit of ${MAX_IMAGE_SIZE / 1024} KB`
+          );
+        }
+      }
     }
 
     await ctx.db.patch(productId, updates);

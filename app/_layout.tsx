@@ -8,6 +8,7 @@ import { useFonts } from "expo-font"; // Correct import for custom fonts
 import { useCallback, useEffect } from "react";
 import { View } from "react-native"; // Import View for layout
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { ConfettiProvider } from "typegpu-confetti/react-native";
 
 const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 
@@ -40,19 +41,24 @@ const InitialLayout = () => {
 
   // Handle routing based on auth state
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !fontsLoaded) return; // Add fontsLoaded check
 
     const inAuthGroup = segments[0] === "(auth)";
 
     if (isSignedIn && !inAuthGroup) {
-      router.replace("/(auth)/(tabs)");
+      // Add setTimeout to ensure layout is mounted
+      setTimeout(() => {
+        router.replace("/(auth)/(tabs)");
+      }, 0);
     } else if (!isSignedIn && inAuthGroup) {
-      router.replace("/(public)");
+      setTimeout(() => {
+        router.replace("/(public)");
+      }, 0);
     }
-  }, [isSignedIn, isLoaded, segments, router]);
+  }, [isSignedIn, isLoaded, fontsLoaded, segments, router]); // Add fontsLoaded to dependencies
 
-  // Return null until fonts are loaded or an error occurs
-  if (!fontsLoaded && !fontError) {
+  // Return null until everything is loaded
+  if (!fontsLoaded || !isLoaded) {
     return null;
   }
 

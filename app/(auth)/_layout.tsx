@@ -30,16 +30,27 @@ const Layout = () => {
         options={{ title: "eSewa Payment" }}
       />
       <Stack.Screen
+        name='product/[id]'
+        options={{ title: "Product Details" }}
+      />
+      {/* <Stack.Screen
         name='cart'
         options={{
           title: "Cart",
-          headerLeft: () => {
-            return (
-              <TouchableOpacity onPress={() => router.dismissTo("/")}>
-                <CaretLeft size={24} color='black' />
-              </TouchableOpacity>
-            );
-          },
+          headerShown: true,
+          // headerLeft: () => {
+          //   return (
+          //     <TouchableOpacity onPress={() => router.dismissTo("/")}>
+          //       <CaretLeft size={24} color='black' />
+          //     </TouchableOpacity>
+          //   );
+          // },
+        }}
+      /> */}
+      <Stack.Screen
+        name='(screens)'
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>

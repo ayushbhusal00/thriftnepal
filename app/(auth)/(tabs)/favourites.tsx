@@ -8,11 +8,14 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import Products from "@/app/components/Products";
 import { Id } from "@/convex/_generated/dataModel";
 import { ThemeContext } from "@/providers/ThemeProvider";
+import ProductList from "@/app/components/ProductList";
+import { Heart } from "phosphor-react-native";
 
 const Page = () => {
   const { colors } = useContext(ThemeContext);
   const favouritesCount = useFavourites((state) => state.favouritesCount);
   const favourites = useFavourites((state) => state.favourites);
+
   // const { userProfile } = useUserProfile();
   // console.log("Favourites: ", favourites);
 
@@ -36,7 +39,8 @@ const Page = () => {
             <View
               className={`bg-[${colors.background.secondary}] rounded-lg border-1 border-[${colors.background.border}] mx-4 `}
             >
-              <Products
+              <ProductList
+                icon='Heart'
                 item={{
                   ...item,
                   _id: item._id as Id<"products">,

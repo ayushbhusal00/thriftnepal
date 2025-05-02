@@ -6,7 +6,6 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@clerk/clerk-expo";
 import { router } from "expo-router";
-import UserProfile from "./UserProfile";
 
 import {
   BookOpenText,
@@ -18,6 +17,7 @@ import {
   UserCircle,
 } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
+import UserProfile from "@/app/components/UserProfile";
 
 type ProfileProps = {
   userId?: Id<"users">;
@@ -44,7 +44,6 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
   return (
     <View
       style={{
-        paddingTop: top,
         backgroundColor: colors.background.secondary,
         flex: 1,
       }}
@@ -57,36 +56,6 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
       >
         {/* //Header Nav */}
 
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: showBackButton ? "space-between" : "flex-end",
-            alignItems: "center",
-            paddingHorizontal: 10,
-            paddingVertical: 5,
-          }}
-        >
-          {/* Header Left */}
-          {showBackButton && (
-            <TouchableOpacity
-              onPress={() => router.back()}
-              className='flex-row gap-4 items-center p-2'
-            >
-              <CaretLeft size={16} color={colors.text.secondary} />
-              <Text
-                className={`bg-${colors.text.primary}`}
-                style={{ color: colors.text.primary }}
-              >
-                Back
-              </Text>
-            </TouchableOpacity>
-          )}
-          {/* Header Right */}
-
-          <TouchableOpacity onPress={() => signOut()}>
-            <SignOut size={24} color={colors.text.secondary} />
-          </TouchableOpacity>
-        </View>
         {userProfile && <UserProfile props={userProfile as any} />}
       </View>
       <View
@@ -118,7 +87,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             <CaretRight size={24} color={colors.text.secondary} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push(`/(auth)/Orders`)}>
+        <TouchableOpacity onPress={() => router.push(`./Orders`)}>
           <View className='px-6 py-4 flex-row justify-between items-center'>
             <View className='flex-row gap-4 items-center '>
               <Package size={24} color={colors.text.secondary} />

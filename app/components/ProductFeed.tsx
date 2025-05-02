@@ -2,35 +2,28 @@ import {
   View,
   Text,
   Image,
-  Touchable,
   TouchableOpacity,
   StyleSheet,
   Pressable,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
-import { Ionicons } from "@expo/vector-icons";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import {
-  BookmarkSimple,
-  ChatTeardrop,
-  Heart,
-  ShareFat,
-  ShoppingCartSimple,
-} from "phosphor-react-native";
+import { ChatTeardrop, Heart, ShareFat } from "phosphor-react-native";
 import { router } from "expo-router";
 import { useCart, useFavourites } from "@/utils/Store";
 import { themes } from "@/utils/color-theme";
 import { ThemeContext } from "@/providers/ThemeProvider";
-import { useContext } from "react";
+import { formatDistanceToNow } from "date-fns";
+
 interface Product {
   _id: string;
   title: string;
   description: string;
   price: number;
   brand: string;
-  images: string[]; // Storage IDs from client uploads
+  images: string[];
   userId: Id<"users">;
   imageUrls: string[];
   category: string;
@@ -38,33 +31,34 @@ interface Product {
   condition: string;
   approved: boolean;
   sold: boolean;
-  _creationTime: Date;
+  _creationTime: Date | number;
 }
 
 const ProductFeed = ({ item }: { item: Product }) => {
-  const { theme, toggleTheme } = useContext(ThemeContext);
-  const { addFavourites, favourites } = useFavourites();
+  const { theme } = useContext(ThemeContext);
+  const { removeFavourites, addFavourites, favourites } = useFavourites();
+  const { addCart } = useCart();
   const user = useQuery(api.users.getUserById, { userId: item.userId });
 
   const isFavourite = favourites.some((product) => product._id === item._id);
 
   const addProductToFavourites = () => {
-    addFavourites({
-      ...item,
-    });
+    addFavourites({ ...item });
   };
-  const { addCart } = useCart();
+
   const addItemToCart = () => {
-    addCart({
-      ...item,
-    });
+    addCart({ ...item });
   };
 
-  const imageUrl = user?.imageUrl;
+  const creationTime =
+    typeof item._creationTime === "number"
+      ? new Date(item._creationTime)
+      : item._creationTime;
 
-  // console.log("product item:", item);
   return (
     <Pressable
+      accessibilityRole='button'
+      accessibilityLabel={`View details for ${item.title}`}
       style={{
         width: "100%",
         flex: 1,
@@ -82,66 +76,64 @@ const ProductFeed = ({ item }: { item: Product }) => {
           padding: 20,
           width: "100%",
           display: "flex",
-          flexDirection: "row",
+          flexDirection: "column",
           gap: 12,
         }}
       >
-        {/* Show user Details here */}
+        {/* User Profile Section */}
+        {user && (
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flexDirection: "row", flex: 1, gap: 12 }}>
+              {user.imageUrl && (
+                <Image
+                  width={40}
+                  height={40}
+                  source={{ uri: user.imageUrl }}
+                  className='w-10 h-10 rounded-full'
+                  accessibilityLabel={`Profile picture for ${user.username}`}
+                />
+              )}
+              <View>
+                <Text
+                  style={{
+                    fontWeight: "700",
+                    fontSize: 14,
+                    color:
+                      theme === "light"
+                        ? themes.light.text.primary
+                        : themes.dark.text.primary,
+                  }}
+                >
+                  {user.username || "Anonymous"}
+                </Text>
+                <Text
+                  style={{
+                    fontWeight: "400",
+                    fontSize: 14,
+                    color:
+                      theme === "light"
+                        ? themes.light.text.secondary
+                        : themes.dark.text.secondary,
+                  }}
+                >
+                  Posted {formatDistanceToNow(creationTime)} ago
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
 
         <View style={{ width: "100%" }}>
           <View className='flex flex-col gap-4' style={{ width: "100%" }}>
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flexDirection: "row", flex: 1, gap: 12 }}>
-                {imageUrl && (
-                  <Image
-                    width={40}
-                    height={40}
-                    source={{
-                      uri: imageUrl,
-                    }}
-                    className='w-10 h-10 rounded-full'
-                    accessibilityLabel={`Profile picture for ${item.title}`}
-                  />
-                )}
-                <View>
-                  <Text
-                    style={{
-                      fontWeight: "700",
-                      fontSize: 14,
-                      color:
-                        theme === "light"
-                          ? themes.light.text.primary
-                          : themes.dark.text.primary,
-                    }}
-                  >
-                    {user?.username || "Anonymous"}
-                  </Text>
-                  <Text
-                    style={{
-                      fontWeight: "400",
-                      fontSize: 14,
-                      color:
-                        theme === "light"
-                          ? themes.light.text.secondary
-                          : themes.dark.text.secondary,
-                    }}
-                  >
-                    Posted 5 days ago
-                    {/* {item.createdAt.toLocaleDateString()} */}
-                  </Text>
-                </View>
-              </View>
-            </View>
             <View
               style={{
                 flex: 1,
                 gap: 12,
-
                 borderRadius: 12,
                 position: "relative",
               }}
             >
-              {item.images.map((uri, index) => (
+              {item.imageUrls?.length > 0 && (
                 <Image
                   style={{
                     borderRadius: 10,
@@ -151,13 +143,12 @@ const ProductFeed = ({ item }: { item: Product }) => {
                         ? themes.light.background.primary
                         : themes.dark.background.primary,
                   }}
-                  key={index}
-                  source={{ uri: item.imageUrls[index] }} // Fixed: Use uri directly instead of require()
+                  source={{ uri: item.imageUrls[0] }}
                   className='rounded-lg overflow-clip w-full'
                   accessibilityLabel={`Image for product ${item.title}`}
                   height={200}
                 />
-              ))}
+              )}
               {item.sold && (
                 <View
                   style={{
@@ -187,7 +178,19 @@ const ProductFeed = ({ item }: { item: Product }) => {
                   gap: 12,
                 }}
               >
-                <Pressable onPress={addProductToFavourites}>
+                <Pressable
+                  accessibilityRole='button'
+                  accessibilityLabel={
+                    isFavourite
+                      ? `Remove ${item.title} from favourites`
+                      : `Add ${item.title} to favourites`
+                  }
+                  onPress={() =>
+                    isFavourite
+                      ? removeFavourites(item._id)
+                      : addProductToFavourites()
+                  }
+                >
                   <Heart
                     size={24}
                     color={
@@ -220,46 +223,36 @@ const ProductFeed = ({ item }: { item: Product }) => {
               {!item.sold && (
                 <View style={styles.buttonContainer}>
                   <TouchableOpacity
-                    onPress={() => {
-                      addItemToCart();
-                    }}
-                    // style={[styles.button, styles.blackButton]}
-                    style={{
-                      backgroundColor:
-                        theme === "light"
-                          ? themes.light.background.contrast
-                          : themes.dark.background.contrast,
-                      paddingVertical: 8,
-                      paddingHorizontal: 16,
-                      justifyContent: "center",
-                      alignItems: "center",
-                      elevation: 5,
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 1 },
-                      shadowOpacity: 0.3,
-                      shadowRadius: 2,
-                    }}
+                    accessibilityRole='button'
+                    accessibilityLabel={`Add ${item.title} to cart`}
+                    onPress={addItemToCart}
+                    style={[
+                      styles.cartButton,
+                      {
+                        backgroundColor:
+                          theme === "light"
+                            ? themes.light.background.contrast
+                            : themes.dark.background.contrast,
+                      },
+                    ]}
                   >
-                    {/* Inner shadow overlay */}
                     <View style={styles.innerShadow} />
-                    <View>
-                      <Text
-                        style={{
-                          color:
-                            theme === "light"
-                              ? themes.light.text.onColor
-                              : themes.dark.text.onColor,
-                        }}
-                      >
-                        Add to Cart
-                      </Text>
-                    </View>
+                    <Text
+                      style={{
+                        color:
+                          theme === "light"
+                            ? themes.light.text.onColor
+                            : themes.dark.text.onColor,
+                      }}
+                    >
+                      Add to Cart
+                    </Text>
                   </TouchableOpacity>
                 </View>
               )}
             </View>
             <View className='flex-row justify-center items-center'>
-              <View className=' flex-col flex-1 gap-2 '>
+              <View className='flex-col flex-1 gap-2'>
                 <Text
                   style={{
                     fontWeight: "500",
@@ -286,7 +279,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
                 </Text>
               </View>
               <View
-                className=' px-2 py-1 bg-blue-200'
+                className='px-2 py-1'
                 style={{
                   backgroundColor:
                     theme === "light"
@@ -300,7 +293,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
               >
                 <Text
                   style={{
-                    fontWeight: 700,
+                    fontWeight: "700",
                     color:
                       theme === "light"
                         ? themes.light.accent.text
@@ -325,18 +318,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: "hidden",
   },
-  button: {},
-  whiteButton: {
-    backgroundColor: "#FFFFFF",
-  },
-  redButton: {
-    backgroundColor: "#FF0000",
-  },
-
-  iconButton: {
-    padding: 10, // Smaller padding for icon button
-    width: 50, // Fixed width for square button
-    height: 50, // Fixed height for square button
+  cartButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+    borderRadius: 10,
   },
   innerShadow: {
     position: "absolute",
@@ -356,11 +348,5 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 16,
     fontWeight: "600",
-  },
-  whiteText: {
-    color: "#FFFFFF",
-  },
-  blackText: {
-    color: "#000000",
   },
 });

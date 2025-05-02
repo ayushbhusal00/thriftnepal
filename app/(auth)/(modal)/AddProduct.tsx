@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"; // Add useEffect import
+import React, { useState, useEffect, useContext } from "react"; // Add useEffect import
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   ScrollView,
   Alert,
   Pressable,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SelectList } from "react-native-dropdown-select-list";
@@ -14,6 +16,9 @@ import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { Camera, Images } from "phosphor-react-native";
+import { ThemeContext } from "@/providers/ThemeProvider";
+import * as Haptics from "expo-haptics";
 
 // Define the type for route parameters
 type ProductParams = {
@@ -45,6 +50,7 @@ type Product = {
 };
 
 const AddProduct = () => {
+  const { colors } = useContext(ThemeContext);
   // Use ProductParams for useLocalSearchParams
   const params = useLocalSearchParams<ProductParams>();
   // console.log("Params:", params); // Log the params object for debuggi
@@ -160,7 +166,24 @@ const AddProduct = () => {
   if (!userProfile?._id) {
     return null;
   }
+  const CreateIcon = () => {
+    return (
+      <View
+        className={`rounded-full p-2 absolute w-20 h-20 items-center justify-center`}
+        style={{
+          backgroundColor: colors.brand.default,
+        }}
+      ></View>
+    );
+  };
 
+  const handleOption = (source: "camera" | "gallery") => {
+    Haptics.selectionAsync();
+    router.push({
+      pathname: "/create",
+      params: { source },
+    });
+  };
   return (
     <ScrollView className='flex-1 bg-white dark:bg-slate-900'>
       <View className='relative'>
@@ -176,6 +199,21 @@ const AddProduct = () => {
           }}
           className='w-full h-72 bg-gray-200'
         />
+        {/* Sell an Item and Upload Image Buttons */}
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.sellButton}
+            onPress={() => handleOption("camera")}
+          >
+            <Camera size={24} color={colors.brand.default} weight='duotone' />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.uploadButton}
+            onPress={() => handleOption("gallery")}
+          >
+            <Images size={24} color={colors.brand.default} weight='duotone' />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View className='p-6'>
@@ -352,3 +390,40 @@ const AddProduct = () => {
 };
 
 export default AddProduct;
+const styles = StyleSheet.create({
+  buttonContainer: {
+    position: "absolute",
+    bottom: 70, // Position above the tab bar (adjust based on tab bar height)
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    gap: 10, // Space between buttons
+  },
+  sellButton: {
+    backgroundColor: "white",
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  uploadButton: {
+    backgroundColor: "white",
+    borderRadius: 50,
+    width: 50,
+    height: 50,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+});

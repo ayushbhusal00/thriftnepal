@@ -8,24 +8,33 @@ export default function Page() {
   const router = useRouter();
   const { source } = useLocalSearchParams();
 
-  // Process image (API call and navigation)
+  // Process image (compression, size validation, API call, and navigation)
   const processImage = async (result: ImagePicker.ImagePickerResult) => {
     if (!result.canceled && result.assets) {
       try {
         // Compress the image using expo-image-manipulator
         const compressedImage = await manipulateAsync(
           result.assets[0].uri,
-          [
-            { resize: { width: 800 } }, // Resize to 800px width, maintaining aspect ratio
-          ],
+          [{ resize: { width: 800 } }], // Resize to 800px width, maintaining aspect ratio
           {
-            compress: 0.7, // Compression quality (0 to 1, where 0.7 is 70% quality)
+            compress: 0.6, // 60% quality for smaller file size
             format: SaveFormat.JPEG,
-            base64: true, // Ensure base64 output
+            base64: true, // Ensure base64 output for API
           }
         );
 
-        const response = await fetch("/api/analyze", {
+        // Validate compressed image size
+        const response = await fetch(compressedImage.uri);
+        const blob = await response.blob();
+        const sizeInMB = blob.size / (1024 * 1024);
+        if (sizeInMB > 1) {
+          throw new Error(
+            "Compressed image is too large (over 1 MB). Try a different image."
+          );
+        }
+
+        // Send compressed image to analysis API
+        const analysisResponse = await fetch("/api/analyze", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -40,13 +49,14 @@ export default function Page() {
           }),
         });
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!analysisResponse.ok) {
+          throw new Error(`HTTP error! status: ${analysisResponse.status}`);
         }
 
-        const data = await response.json();
-        console.log("Product Analysis from api:", data.data.productAnalysis);
+        const data = await analysisResponse.json();
+        console.log("Product Analysis from API:", data.data.productAnalysis);
 
+        // Navigate to AddProduct with compressed image URI
         requestAnimationFrame(() => {
           router.replace({
             pathname: "/AddProduct",
@@ -56,17 +66,17 @@ export default function Page() {
             },
           });
         });
-      } catch (error) {
-        console.error("Network or Analysis Error:", error);
+      } catch (error: any) {
+        console.error("Error processing image:", error);
         Alert.alert(
-          "Connection Error",
-          "Please check your internet connection and try again."
+          "Error",
+          error.message || "Failed to process image. Please try again."
         );
       }
     }
   };
 
-  // Capture image
+  // Capture image from camera or gallery
   const captureImage = async (forceGallery = false) => {
     let result;
 
@@ -127,6 +137,7 @@ export default function Page() {
     await processImage(result);
   };
 
+  // Trigger image capture based on source parameter
   useEffect(() => {
     if (source) {
       captureImage(source === "gallery");
@@ -152,6 +163,18 @@ export default function Page() {
         onPress={() => captureImage()}
       >
         <Text>📸 Capture Image</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#ccc",
+          padding: 10,
+          borderRadius: 10,
+          marginTop: 10,
+        }}
+        onPress={() => captureImage(true)}
+      >
+        <Text>🖼️ Pick from Gallery</Text>
       </TouchableOpacity>
     </View>
   );

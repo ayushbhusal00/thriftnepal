@@ -4,7 +4,8 @@ import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-
+import ConfettiCannon from "react-native-confetti-cannon";
+import { Button } from "react-native";
 const SuccessPage: React.FC = () => {
   const { message, data } = useLocalSearchParams<{
     message: string;
@@ -39,6 +40,7 @@ const SuccessPage: React.FC = () => {
   }
   return (
     <View style={styles.container}>
+      <ConfettiCannon count={200} origin={{ x: -10, y: 0 }} />
       <Text style={styles.title}>Payment Status</Text>
       <Text style={styles.message}>{message || "Payment Successful!"}</Text>
       <Text style={styles.details}>
@@ -47,6 +49,7 @@ const SuccessPage: React.FC = () => {
       <Text style={styles.details}>
         Amount: {parsedData.total_amount || "N/A"}
       </Text>
+
       <Pressable
         style={{
           backgroundColor: "green",

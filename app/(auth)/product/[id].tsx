@@ -1,5 +1,12 @@
-import { View, Text, Image, Pressable, ScrollView } from "react-native";
-import React from "react";
+import {
+  View,
+  Text,
+  Image,
+  Pressable,
+  ScrollView,
+  Dimensions,
+} from "react-native";
+import React, { useContext } from "react";
 import { useLocalSearchParams } from "expo-router";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -10,20 +17,53 @@ import {
   PencilSimpleLine,
   TrashSimple,
 } from "phosphor-react-native";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const Page = () => {
+  const { colors } = useContext(ThemeContext);
   //Once requested pass the whole product item in params
   const { id } = useLocalSearchParams(); // Extracts the `id` from the route
   // console.log(id); // Prints the `id` to the console
   const product = useQuery(api.products.getProductById, {
     productId: id as Id<"products">,
   });
+
   console.log(product); // Prints the `product` to the console
   return (
-    <ScrollView>
+    <ScrollView
+      style={{
+        backgroundColor: colors.background.secondary,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        display: "flex",
+        flexDirection: "column",
+        gap: 16,
+        flex: 1,
+      }}
+    >
+      <View style={{ marginBottom: 16 }}>
+        <Text className={`text-subhead-1 text-[${colors.text.secondary}]`}>
+          Product → {product?.title}
+        </Text>
+      </View>
       <Image
         source={{ uri: product?.imageUrls[0] }}
-        style={{ width: "100%", height: 200 }}
+        style={{
+          width: "100%",
+          height: Dimensions.get("window").width * 0.75,
+          padding: 20,
+          backgroundColor: colors.background.primary,
+          borderRadius: 10,
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowOpacity: 0.1,
+          shadowRadius: 2,
+          borderWidth: 0.5,
+          borderColor: colors.background.border,
+        }}
       />
       <View className='m-5 flex-col gap-4'>
         <View className='flex-col gap-2 justify-between'>

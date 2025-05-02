@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { Product } from "./Types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 interface FavouriteState {
   favourites: Product[];
@@ -46,7 +47,8 @@ export const useFavourites = create<FavouriteState>()(
         }),
     }),
     {
-      name: "favourites-storage", // Key for localStorage
+      name: "favourites-storage",
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );
@@ -95,6 +97,7 @@ export const useCart = create<CartState>()(
     }),
     {
       name: "cart-storage", // Key for localStorage
+      storage: createJSONStorage(() => AsyncStorage),
     }
   )
 );

@@ -2,6 +2,7 @@ import React from "react";
 import { WebView } from "react-native-webview";
 import { View, ActivityIndicator, StyleSheet } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
+import { Platform } from "react-native";
 
 interface PaymentData {
   amount: string;
@@ -110,6 +111,36 @@ const PaymentWebView: React.FC = () => {
       });
     }
   };
+
+  if (Platform.OS === "web") {
+    return (
+      <View style={styles.container}>
+        <div
+          dangerouslySetInnerHTML={{
+            __html: `
+              <form id="esewaForm" action="https://rc-epay.esewa.com.np/api/epay/main/v2/form" method="POST" target="_blank">
+                <input type="hidden" name="amount" value="${paymentData.amount}">
+                <input type="hidden" name="tax_amount" value="${paymentData.tax_amount}">
+                <input type="hidden" name="total_amount" value="${paymentData.total_amount}">
+                <input type="hidden" name="transaction_uuid" value="${paymentData.transaction_uuid}">
+                <input type="hidden" name="product_code" value="${paymentData.product_code}">
+                <input type="hidden" name="product_service_charge" value="${paymentData.product_service_charge}">
+                <input type="hidden" name="product_delivery_charge" value="${paymentData.product_delivery_charge}">
+                <input type="hidden" name="success_url" value="${paymentData.success_url}">
+                <input type="hidden" name="failure_url" value="${paymentData.failure_url}">
+                <input type="hidden" name="signed_field_names" value="${paymentData.signed_field_names}">
+                <input type="hidden" name="signature" value="${paymentData.signature}">
+                <input type="submit" value="Pay with eSewa" style="display:none;">
+              </form>
+              <script>
+                document.getElementById("esewaForm").submit();
+              </script>
+            `,
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>

@@ -4,7 +4,7 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import Products from "@/app/components/Products";
+import ProductStatus from "@/app/components/ProductStatus";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeContext } from "@/providers/ThemeProvider";
 
@@ -140,24 +140,15 @@ const Page = () => {
                 backgroundColor: colors.background.secondary,
                 borderColor: colors.background.border,
               }}
-              className={`rounded-lg border-1 mx-4`}
+              className={`rounded-lg px-5`}
             >
-              <Products item={item as any} />
+              <ProductStatus item={item as any} />
             </View>
           ) : null;
         }}
         ListEmptyComponent={() => {
           return <Text className='px-5'>No products</Text>;
         }}
-        ItemSeparatorComponent={() => (
-          <View
-            style={{
-              height: 1,
-              marginHorizontal: 16,
-              backgroundColor: colors.background.border,
-            }}
-          />
-        )}
       />
     </SafeAreaView>
   );

@@ -12,15 +12,21 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import {
+  CalendarBlank,
   Check,
+  Cross,
+  Heart,
   Hourglass,
   PencilSimpleLine,
+  Ruler,
   TrashSimple,
+  X,
 } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
+import { themes } from "@/utils/color-theme";
 
 const Page = () => {
-  const { colors } = useContext(ThemeContext);
+  const { colors, theme } = useContext(ThemeContext);
   //Once requested pass the whole product item in params
   const { id } = useLocalSearchParams(); // Extracts the `id` from the route
   // console.log(id); // Prints the `id` to the console
@@ -34,7 +40,7 @@ const Page = () => {
       style={{
         backgroundColor: colors.background.secondary,
         paddingHorizontal: 20,
-        paddingVertical: 10,
+        paddingVertical: 24,
         display: "flex",
         flexDirection: "column",
         gap: 16,
@@ -46,12 +52,244 @@ const Page = () => {
           Product → {product?.title}
         </Text>
       </View>
-      <Image
-        source={{ uri: product?.imageUrls[0] }}
+      <View>
+        <Image
+          source={{ uri: product?.imageUrls[0] }}
+          style={{
+            width: "100%",
+            height: Dimensions.get("window").width * 0.75,
+            padding: 20,
+            overflow: "hidden",
+            borderRadius: 10,
+          }}
+        />
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            paddingHorizontal: 20,
+            paddingBottom: 20,
+            justifyContent: "center",
+            gap: 10,
+          }}
+        >
+          <Image
+            source={{ uri: product?.imageUrls[0] }}
+            style={{
+              width: 100,
+              height: 100,
+              padding: 10,
+              borderRadius: 10,
+
+              borderWidth: 1,
+              borderColor: colors.brand.default,
+            }}
+          />
+          <Image
+            source={{ uri: product?.imageUrls[0] }}
+            style={{
+              width: 100,
+              height: 100,
+              padding: 10,
+              borderRadius: 10,
+
+              borderWidth: 0.5,
+              borderColor: colors.background.border,
+            }}
+          />
+        </View>
+      </View>
+      <View className='my-5 flex-col gap-4'>
+        <View
+          style={{
+            backgroundColor: colors.accent.interactive,
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 10,
+            alignSelf: "flex-start",
+          }}
+        >
+          <Text
+            style={{
+              color: colors.accent.text,
+            }}
+            className={`text-paragraph-1`}
+          >
+            {product?.brand} | {product?.category}
+          </Text>
+        </View>
+        <View className='flex-col gap-2 justify-between'>
+          <Text
+            numberOfLines={2}
+            className={`text-3xl font-medium color-[${colors.text.primary}]`}
+          >
+            {product?.title}
+          </Text>
+        </View>
+        <View className='flex-col gap-2 justify-between'>
+          <Text className={`text-xl font-medium ${colors.text.secondary}`}>
+            ₹ {product?.price}
+          </Text>
+        </View>
+      </View>
+      <View
         style={{
-          width: "100%",
-          height: Dimensions.get("window").width * 0.75,
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "flex-start",
+          gap: 4,
+          marginBottom: 20,
+          padding: 16,
+          borderColor: colors.background.border,
+          borderWidth: 0.5,
+          borderRadius: 10,
+          backgroundColor: colors.background.secondary,
+        }}
+      >
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            gap: 4,
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              marginRight: 10,
+              padding: 10,
+              borderRadius: 10,
+              borderColor: colors.background.border,
+              borderWidth: 0.5,
+              backgroundColor: colors.background.primary,
+            }}
+          >
+            <Ruler size={24} color={colors.text.secondary} weight='regular' />
+          </View>
+
+          <View style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Text
+              style={{
+                color: colors.text.secondary,
+                fontSize: 14,
+              }}
+              className={`text-paragraph-1`}
+            >
+              Size:
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+                color: colors.text.primary,
+              }}
+              className={`text-paragraph-1`}
+            >
+              {product?.size}
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            gap: 4,
+            flex: 1,
+          }}
+        >
+          <View
+            style={{
+              marginRight: 10,
+              padding: 10,
+              borderRadius: 10,
+              borderColor: colors.background.border,
+              borderWidth: 0.5,
+              backgroundColor: colors.background.primary,
+            }}
+          >
+            <CalendarBlank
+              size={24}
+              color={colors.text.secondary}
+              weight='regular'
+            />
+          </View>
+
+          <View style={{ display: "flex", flexDirection: "column", gap: 1 }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: colors.text.secondary,
+              }}
+              className={`text-paragraph-1`}
+            >
+              Posted on:
+            </Text>
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: 400,
+
+                color: colors.text.primary,
+              }}
+              className={`text-paragraph-1`}
+            >
+              {product?._creationTime
+                ? new Date(product._creationTime).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
+                : null}
+            </Text>
+          </View>
+        </View>
+      </View>
+      <Pressable
+        style={{
+          backgroundColor: colors.brand.default,
+          paddingHorizontal: 24,
+          paddingVertical: 16,
+          borderRadius: 10,
+          flex: 1,
+          flexDirection: "row",
+          justifyContent: "center",
+          alignItems: "center",
+          marginBottom: 20,
+          shadowColor: colors.brand.default,
+          shadowOffset: {
+            width: 0,
+            height: 1,
+          },
+          shadowOpacity: 0.2,
+          shadowRadius: 4,
+          elevation: 2,
+          borderWidth: 0.5,
+          borderColor: colors.brand.text,
+        }}
+        onPress={() => console.log("Added Items to cart")}
+      >
+        <Text
+          style={{
+            color: colors.text.onColor,
+            fontWeight: 700,
+          }}
+          className={`text-paragraph-1`}
+        >
+          Add to Cart
+        </Text>
+      </Pressable>
+      {/* Add descriptions and product details here */}
+      <View
+        style={{
           padding: 20,
+          flexDirection: "column",
+          gap: 16,
+
           backgroundColor: colors.background.primary,
           borderRadius: 10,
           shadowColor: "#000",
@@ -64,158 +302,88 @@ const Page = () => {
           borderWidth: 0.5,
           borderColor: colors.background.border,
         }}
-      />
-      <View className='m-5 flex-col gap-4'>
-        <View className='flex-col gap-2 justify-between'>
-          <Text className='text-md font-medium color-neutral-500'>
-            Product Title:
+      >
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            gap: 4,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 17,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 8,
+            }}
+          >
+            Product Description:
           </Text>
-          <Text className='text-md font-medium color-neutral-900'>
-            {product?.title}
-          </Text>
+          <X size={24} color={colors.text.secondary} weight='regular' />
         </View>
-        <View className='flex-col gap-2 justify-between'>
-          <Text className='text-md font-medium color-neutral-500'>Price:</Text>
-          <Text className='text-md font-medium color-neutral-900'>
-            {product?.price}
+
+        <View>
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 8,
+            }}
+          >
+            Overview:
           </Text>
-        </View>
-        <View className='flex-col gap-2 justify-between'>
-          <Text className='text-md font-medium color-neutral-500'>
-            Posted on:
-          </Text>
-          <Text className='text-md font-medium color-neutral-900'>
-            {product?._creationTime}
-          </Text>
-        </View>
-        {product?.approved ? (
-          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-            <Pressable
-              style={{
-                backgroundColor: "#E7D5E1",
-                paddingHorizontal: 12,
-                paddingVertical: 8,
-                borderRadius: 8,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 8,
-                justifyContent: "center",
-                flex: 1,
-              }}
-              onPress={() => console.log("Sold Offline")}
-            >
-              <Check size={20} color='#572B49' />
-              <Text style={{ color: "#572B49", fontWeight: "700" }}>Sold</Text>
-            </Pressable>
-            <Pressable
-              style={{
-                backgroundColor: "#DFEDF4",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                borderRadius: 12,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                justifyContent: "center",
-              }}
-              onPress={() => console.log("Make Changes")}
-            >
-              <PencilSimpleLine size={20} color='#314B57' />
-            </Pressable>
-            <Pressable
-              style={{
-                backgroundColor: "#F5DAE4",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                borderRadius: 12,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                justifyContent: "center",
-              }}
-              onPress={() => console.log("Delete")}
-            >
-              <TrashSimple size={20} color='#7C3751' />
-            </Pressable>
-          </View>
-        ) : (
-          <View style={{ display: "flex", flexDirection: "row", gap: 8 }}>
-            <Pressable
-              style={{
-                backgroundColor: "#F4EEDF",
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-                borderRadius: 8,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                justifyContent: "center",
-                flex: 1,
-              }}
-              onPress={() => console.log("Sold Online")}
-            >
-              <Hourglass size={20} color='#4F442B' />
-              <Text style={{ color: "#4F442B", fontWeight: "700" }}>
-                Awaiting review
-              </Text>
-            </Pressable>
-            <Pressable
-              style={{
-                backgroundColor: "#DFEDF4",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                borderRadius: 12,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                justifyContent: "center",
-              }}
-              onPress={() => console.log("Make Changes")}
-            >
-              <PencilSimpleLine size={20} color='#314B57' />
-            </Pressable>
-            <Pressable
-              style={{
-                backgroundColor: "#F5DAE4",
-                paddingHorizontal: 12,
-                paddingVertical: 12,
-                borderRadius: 12,
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                justifyContent: "center",
-              }}
-              onPress={() => console.log("Delete")}
-            >
-              <TrashSimple size={20} color='#7C3751' />
-            </Pressable>
-          </View>
-        )}
-      </View>
-      {/* Add descriptions and product details here */}
-      <View style={{ margin: 20, flexDirection: "column", gap: 16 }}>
-        <View style={{ flexDirection: "column", gap: 4 }}>
-          <Text className='text-md font-medium color-neutral-500'>
-            Description:
-          </Text>
-          <Text className='text-md font-medium color-neutral-900'>
+          <Text
+            style={{
+              color: colors.text.primary,
+              marginBottom: 8,
+            }}
+            className='text-paragraph-1 leading-snug'
+          >
             {product?.description}
           </Text>
         </View>
 
         <View style={{ flexDirection: "column", gap: 4 }}>
-          <Text className='text-md font-medium color-neutral-500'>
-            Product Highlights:
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 8,
+            }}
+          >
+            Highlights:
           </Text>
-          <Text className='text-md font-medium color-neutral-900'>
+          <Text
+            style={{
+              color: colors.text.primary,
+              marginBottom: 8,
+            }}
+            className='text-paragraph-1 leading-snug'
+          >
             {product?.highlights}
           </Text>
         </View>
         <View style={{ flexDirection: "column", gap: 4 }}>
-          <Text className='text-md font-medium color-neutral-500'>
-            Product Material:
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: 600,
+              color: colors.text.secondary,
+              marginBottom: 8,
+            }}
+          >
+            Material:
           </Text>
-          <Text className='text-md font-medium color-neutral-900'>
+          <Text
+            style={{
+              color: colors.text.primary,
+              marginBottom: 8,
+            }}
+            className='text-paragraph-1 leading-snug'
+          >
             {product?.fabrics}
           </Text>
         </View>

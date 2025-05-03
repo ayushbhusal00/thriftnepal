@@ -75,7 +75,7 @@ const Page = () => {
           <TextInput
             placeholder='Search for products'
             placeholderTextColor={colors.text.secondary}
-            className={`flex-row items-center flex-1 gap-4 p-4 border-hairline border-[${colors.background.border}] shadow-['red] rounded-lg`}
+            className={`flex-row items-center flex-1 gap-4 p-4 border-hairline border-[${colors.background.border}] shadow-['red'] rounded-lg`}
             style={{
               borderColor: colors.background.border,
               backgroundColor:
@@ -170,12 +170,12 @@ const Page = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 12,
-          borderBottomColor: "#00000010",
+          flex: 1,
+          borderBottomColor: colors.background.border,
           borderBottomWidth: 1,
         }}
       >
-        <View className='flex-row gap-4 w-full pl-5'>
+        <View className='flex-row gap-3 w-full pl-5'>
           {stories.map((item, index) => (
             <TouchableOpacity
               key={item.userId}
@@ -192,55 +192,38 @@ const Page = () => {
               className='relative flex-row items-center gap-4 mb-4'
             >
               <View className='relative'>
-                {item.storyImageUrls?.[0] ? (
-                  <Image
-                    source={{ uri: item.storyImageUrls[0] }}
-                    className={`rounded-lg shadow-md`}
-                    style={{
-                      width: 100,
-                      height: 140,
-                    }}
-                  />
-                ) : (
-                  <Text>No Story Image</Text>
-                )}
-                <Text
-                  numberOfLines={1}
-                  className='absolute bottom-2 left-2 text-white text-sm font-semibold'
-                  style={{ zIndex: 2 }}
-                >
-                  {item.userId}
-                </Text>
                 {item.userImageUrl ? (
-                  <Image
-                    source={{ uri: item.userImageUrl }}
-                    className='rounded-lg shadow-md border border-1 border-purple-200'
+                  <LinearGradient
+                    colors={[colors.brand.default, colors.accent.default]} // slate-300 to slate-700
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 0, y: 1 }}
                     style={{
-                      width: 32,
-                      height: 32,
-                      borderRadius: 99,
-                      position: "absolute",
-                      top: 10,
-                      left: 10,
+                      width: 68,
+                      height: 68,
+                      borderRadius: 34,
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
-                  />
+                  >
+                    <Image
+                      source={{ uri: item.userImageUrl }}
+                      style={{
+                        width: 64,
+                        height: 64,
+                        borderRadius: 32,
+                        borderWidth: 2,
+                        borderColor:
+                          theme === "dark"
+                            ? colors.background.secondary
+                            : colors.background.primary,
+                      }}
+                    />
+                  </LinearGradient>
                 ) : (
                   <Text className='absolute top-10 left-10 text-xs'>
                     No User Image
                   </Text>
                 )}
-                <LinearGradient
-                  colors={["#00000000", "#00000070"]}
-                  start={{ x: 0, y: 0.5 }}
-                  end={{ x: 0, y: 1 }}
-                  style={{
-                    position: "absolute",
-                    borderRadius: 10,
-                    zIndex: 1,
-                    width: "100%",
-                    height: "100%",
-                  }}
-                />
               </View>
             </TouchableOpacity>
           ))}
@@ -257,9 +240,12 @@ const Page = () => {
         data={allProducts}
         renderItem={({ item }) =>
           item && typeof item.brand === "string" ? (
-            <ProductFeed item={item as any} />
+            <View style={{ padding: 20, flex: 1 }}>
+              <ProductFeed item={item as any} />
+            </View>
           ) : null
         }
+        numColumns={2}
         ListHeaderComponent={renderStoriesSection}
         ListEmptyComponent={() =>
           isLoadingMore || !paginatedProducts ? (

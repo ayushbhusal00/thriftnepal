@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import Products from "@/app/components/Products";
+import Products from "@/app/components/ProductStatus";
 import { Id } from "@/convex/_generated/dataModel";
 import { ThemeContext } from "@/providers/ThemeProvider";
 import ProductList from "@/app/components/ProductList";

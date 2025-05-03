@@ -64,7 +64,7 @@ const Layout = () => {
         <Tabs.Screen
           name='create'
           options={{
-            title: "Create",
+            title: "Add new Product",
             tabBarIcon({ color, size }) {
               return <PlusSquare size={size} color={color} weight='duotone' />;
             },

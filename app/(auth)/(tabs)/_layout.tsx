@@ -52,16 +52,6 @@ const Layout = () => {
         />
 
         <Tabs.Screen
-          name='favourites'
-          options={{
-            title: "Favourites",
-            headerShown: false,
-            tabBarIcon({ color, size }) {
-              return <Heart size={size} color={color} weight='duotone' />;
-            },
-          }}
-        />
-        <Tabs.Screen
           name='create'
           options={{
             title: "Add new Product",

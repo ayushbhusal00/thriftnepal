@@ -24,17 +24,37 @@ import {
 } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
 import { themes } from "@/utils/color-theme";
+import { useCart } from "@/utils/Store";
 
 const Page = () => {
   const { colors, theme } = useContext(ThemeContext);
-  //Once requested pass the whole product item in params
+  const addCart = useCart((state) => state.addCart);
+  const removeFromCart = useCart((state) => state.removeCart);
+  const cart = useCart((state) => state.cart);
   const { id } = useLocalSearchParams(); // Extracts the `id` from the route
-  // console.log(id); // Prints the `id` to the console
   const product = useQuery(api.products.getProductById, {
     productId: id as Id<"products">,
   });
 
-  console.log(product); // Prints the `product` to the console
+  const isInCart = product && cart.some((item) => item._id === product._id);
+
+  const addItemToCart = () => {
+    if (product && product._id) {
+      addCart({
+        ...product,
+        _id: product._id,
+        approved: product.approved || false,
+        sold: product.sold || false,
+      });
+    }
+  };
+
+  const removeItemFromCart = () => {
+    if (product && product._id) {
+      removeFromCart(product._id);
+    }
+  };
+
   return (
     <ScrollView
       style={{
@@ -80,7 +100,6 @@ const Page = () => {
               height: 100,
               padding: 10,
               borderRadius: 10,
-
               borderWidth: 1,
               borderColor: colors.brand.default,
             }}
@@ -92,7 +111,6 @@ const Page = () => {
               height: 100,
               padding: 10,
               borderRadius: 10,
-
               borderWidth: 0.5,
               borderColor: colors.background.border,
             }}
@@ -169,7 +187,6 @@ const Page = () => {
           >
             <Ruler size={24} color={colors.text.secondary} weight='regular' />
           </View>
-
           <View style={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Text
               style={{
@@ -218,7 +235,6 @@ const Page = () => {
               weight='regular'
             />
           </View>
-
           <View style={{ display: "flex", flexDirection: "column", gap: 1 }}>
             <Text
               style={{
@@ -233,7 +249,6 @@ const Page = () => {
               style={{
                 fontSize: 14,
                 fontWeight: 400,
-
                 color: colors.text.primary,
               }}
               className={`text-paragraph-1`}
@@ -249,6 +264,7 @@ const Page = () => {
           </View>
         </View>
       </View>
+
       <Pressable
         style={{
           backgroundColor: colors.brand.default,
@@ -271,7 +287,7 @@ const Page = () => {
           borderWidth: 0.5,
           borderColor: colors.brand.text,
         }}
-        onPress={() => console.log("Added Items to cart")}
+        onPress={isInCart ? removeItemFromCart : addItemToCart}
       >
         <Text
           style={{
@@ -280,16 +296,15 @@ const Page = () => {
           }}
           className={`text-paragraph-1`}
         >
-          Add to Cart
+          {isInCart ? "Remove from Cart" : "Add to Cart"}
         </Text>
       </Pressable>
-      {/* Add descriptions and product details here */}
+
       <View
         style={{
           padding: 20,
           flexDirection: "column",
           gap: 16,
-
           backgroundColor: colors.background.primary,
           borderRadius: 10,
           shadowColor: "#000",

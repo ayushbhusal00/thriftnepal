@@ -1,181 +1,162 @@
 import { useRouter, useLocalSearchParams } from "expo-router";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Text,
+  TouchableOpacity,
+  View,
+  Image,
+  Pressable,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { manipulateAsync, SaveFormat } from "expo-image-manipulator";
-import { useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 export default function Page() {
   const router = useRouter();
-  const { source } = useLocalSearchParams();
+  const { colors } = useContext(ThemeContext);
+  const { source } = useLocalSearchParams<{ source?: string }>();
+  const [image, setImage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  // Process image (compression, size validation, API call, and navigation)
-  const processImage = async (result: ImagePicker.ImagePickerResult) => {
-    if (!result.canceled && result.assets) {
-      try {
-        // Compress the image using expo-image-manipulator
-        const compressedImage = await manipulateAsync(
-          result.assets[0].uri,
-          [{ resize: { width: 800 } }], // Resize to 800px width, maintaining aspect ratio
-          {
-            compress: 0.6, // 60% quality for smaller file size
-            format: SaveFormat.JPEG,
-            base64: true, // Ensure base64 output for API
-          }
-        );
+  const screenHeight = Dimensions.get("window").height;
 
-        // Validate compressed image size
-        const response = await fetch(compressedImage.uri);
-        const blob = await response.blob();
-        const sizeInMB = blob.size / (1024 * 1024);
-        if (sizeInMB > 1) {
-          throw new Error(
-            "Compressed image is too large (over 1 MB). Try a different image."
-          );
-        }
+  // const handleImageUpload = async (fromGallery = false) => {
+  //   const pickImage =
+  //     async (): Promise<ImagePicker.ImagePickerResult | null> => {
+  //       const permissionResult =
+  //         await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //       if (!permissionResult.granted) {
+  //         Alert.alert(
+  //           "Permission Denied",
+  //           "Gallery access is required to pick photos."
+  //         );
+  //         return null;
+  //       }
+  //       return await ImagePicker.launchImageLibraryAsync({
+  //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //         allowsMultipleSelection: false,
+  //         quality: 1,
+  //       });
+  //     };
 
-        // Send compressed image to analysis API
-        const analysisResponse = await fetch("/api/analyze", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            image: {
-              inlineData: {
-                data: compressedImage.base64,
-                mimeType: "image/jpeg",
-              },
-            },
-          }),
-        });
+  //   const captureImage =
+  //     async (): Promise<ImagePicker.ImagePickerResult | null> => {
+  //       const permissionResult =
+  //         await ImagePicker.requestCameraPermissionsAsync();
+  //       if (!permissionResult.granted) {
+  //         Alert.alert(
+  //           "Permission Denied",
+  //           "Camera access is required to take photos. Would you like to pick from the gallery instead?",
+  //           [
+  //             { text: "Cancel", style: "cancel" },
+  //             {
+  //               text: "Pick from Gallery",
+  //               onPress: () => handleImageUpload(true),
+  //             },
+  //           ]
+  //         );
+  //         return null;
+  //       }
+  //       return await ImagePicker.launchCameraAsync({
+  //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //         allowsEditing: true,
+  //         aspect: [4, 3],
+  //         quality: 1,
+  //       });
+  //     };
 
-        if (!analysisResponse.ok) {
-          throw new Error(`HTTP error! status: ${analysisResponse.status}`);
-        }
+  //   setLoading(true);
+  //   try {
+  //     const result = fromGallery ? await pickImage() : await captureImage();
+  //     if (!result || result.canceled || !result.assets) return;
 
-        const data = await analysisResponse.json();
-        console.log("Product Analysis from API:", data.data.productAnalysis);
+  //     const imageUri = result.assets[0].uri;
+  //     setImage(imageUri);
 
-        // Navigate to AddProduct with compressed image URI
-        requestAnimationFrame(() => {
-          router.replace({
-            pathname: "/AddProduct",
-            params: {
-              ...data.data.productAnalysis,
-              imageUri: compressedImage.uri, // Use compressed image URI
-            },
-          });
-        });
-      } catch (error: any) {
-        console.error("Error processing image:", error);
-        Alert.alert(
-          "Error",
-          error.message || "Failed to process image. Please try again."
-        );
-      }
-    }
-  };
+  //     router.push({
+  //       pathname: "/addProduct",
+  //       params: { imageUri },
+  //     });
+  //   } catch (error) {
+  //     console.error("Error uploading image:", error);
+  //     Alert.alert("Error", "Failed to upload image. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
-  // Capture image from camera or gallery
-  const captureImage = async (forceGallery = false) => {
-    let result;
+  // useEffect(() => {
+  //   if (source === "camera") {
+  //     handleImageUpload(false);
+  //   } else if (source === "gallery") {
+  //     handleImageUpload(true);
+  //   }
+  // }, [source]);
 
-    if (!forceGallery) {
-      const permissionResult =
-        await ImagePicker.requestCameraPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert(
-          "Permission Denied",
-          "Camera access is required to take photos. Would you like to pick from the gallery instead?",
-          [
-            { text: "Cancel", style: "cancel" },
-            { text: "Pick from Gallery", onPress: () => captureImage(true) },
-          ]
-        );
-        return;
-      }
-
-      result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        base64: true,
-        quality: 1,
-      });
-
-      if (result.canceled && !result.assets) {
-        Alert.alert(
-          "Camera Unavailable",
-          "Would you like to pick an image from the gallery?",
-          [
-            { text: "Cancel", style: "cancel" },
-            { text: "Pick from Gallery", onPress: () => captureImage(true) },
-          ]
-        );
-        return;
-      }
-    } else {
-      const permissionResult =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert(
-          "Permission Denied",
-          "Gallery access is required to pick photos."
-        );
-        return;
-      }
-
-      result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        base64: true,
-        quality: 1,
-      });
-    }
-
-    await processImage(result);
-  };
-
-  // Trigger image capture based on source parameter
-  useEffect(() => {
-    if (source) {
-      captureImage(source === "gallery");
-    }
-  }, [source]);
+  // const removeImage = () => {
+  //   setImage(null);
+  // };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text style={{ marginBottom: 10 }}>Choose an image</Text>
-
-      <TouchableOpacity
+    <View style={{ flex: 1, backgroundColor: colors.background.primary }}>
+      <View
         style={{
-          backgroundColor: "#ccc",
-          padding: 10,
-          borderRadius: 10,
+          height: screenHeight * 0.7,
+          justifyContent: "center",
+          alignItems: "center",
         }}
-        onPress={() => captureImage()}
       >
-        <Text>📸 Capture Image</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#ccc",
-          padding: 10,
-          borderRadius: 10,
-          marginTop: 10,
-        }}
-        onPress={() => captureImage(true)}
-      >
-        <Text>🖼️ Pick from Gallery</Text>
-      </TouchableOpacity>
+        <Image
+          source={require("@/assets/images/illustrations/start-selling.png")}
+          style={{ width: 300, height: 340 }}
+        />
+      </View>
+      <View style={{ padding: 20 }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: colors.brand.default,
+            padding: 15,
+            borderRadius: 10,
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+          onPress={() => router.push("/addProduct")}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Sell new product
+          </Text>
+        </TouchableOpacity>
+      </View>
+      {/* <View style={{ padding: 20 }}>
+        <TouchableOpacity
+          style={{
+            backgroundColor: colors.brand.default,
+            padding: 15,
+            borderRadius: 10,
+            alignItems: "center",
+            marginBottom: 20,
+          }}
+          onPress={() => handleImageUpload(false)}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>Take Photo</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            backgroundColor: colors.brand.default,
+            padding: 15,
+            borderRadius: 10,
+            alignItems: "center",
+          }}
+          onPress={() => handleImageUpload(true)}
+        >
+          <Text style={{ color: "white", fontWeight: "bold" }}>
+            Pick from Gallery
+          </Text>
+        </TouchableOpacity>
+      </View> */}
     </View>
   );
 }

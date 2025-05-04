@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react"; // Add useEffect import
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SelectList } from "react-native-dropdown-select-list";
@@ -20,7 +21,6 @@ import { Camera, Images } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
 import * as Haptics from "expo-haptics";
 
-// Define the type for route parameters
 type ProductParams = {
   imageUri?: string;
   identifiedProduct?: string;
@@ -49,23 +49,13 @@ type Product = {
   approved: boolean;
 };
 
-const AddProduct = () => {
+const Page = () => {
   const { colors } = useContext(ThemeContext);
-  // Use ProductParams for useLocalSearchParams
-  const params = useLocalSearchParams<ProductParams>();
-  // console.log("Params:", params); // Log the params object for debuggi
   const { userProfile } = useUserProfile();
+  const params = useLocalSearchParams<ProductParams>();
   const generateUploadUrl = useMutation(api.products.generateUploadUrl);
   const addProduct = useMutation(api.products.addProduct);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Check for user profile and navigate back if not loaded
-  useEffect(() => {
-    if (!userProfile?._id) {
-      Alert.alert("Error", "User profile not loaded. Please try again.");
-      router.back();
-    }
-  }, [userProfile]); // Run when userProfile changes
 
   const [formData, setFormData] = useState<Product>({
     brand: params.brand || "",
@@ -77,7 +67,7 @@ const AddProduct = () => {
     featureHighlights: params.featureHighlights || "",
     productCategory: params.productCategory || "",
     verbalDescription: params.verbalDescription || "",
-    userId: userProfile?._id as Id<"users">, // Safe to use now
+    userId: userProfile?._id as Id<"users">,
     approved: false,
     imageUri: params.imageUri || "",
   });
@@ -103,7 +93,14 @@ const AddProduct = () => {
       "Are you sure you want to go back? All changes will be discarded.",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Discard", style: "destructive", onPress: () => router.back() },
+        {
+          text: "Discard",
+          style: "destructive",
+          onPress: () =>
+            router.push({
+              pathname: "/create",
+            }),
+        },
       ]
     );
   };
@@ -113,7 +110,6 @@ const AddProduct = () => {
     setIsSubmitting(true);
 
     try {
-      // Validate required fields
       if (
         !formData.identifiedProduct ||
         !formData.productCategory ||
@@ -121,14 +117,17 @@ const AddProduct = () => {
         !formData.size ||
         !formData.condition ||
         !formData.estimatedCost ||
+        isNaN(parseFloat(formData.estimatedCost)) ||
         !formData.imageUri
       ) {
-        Alert.alert("Error", "Please fill in all required fields.");
+        Alert.alert(
+          "Error",
+          "Please fill in all required fields with valid data."
+        );
         setIsSubmitting(false);
         return;
       }
 
-      // Upload image
       const uploadUrl = await generateUploadUrl();
       const response = await fetch(uploadUrl, {
         method: "POST",
@@ -137,7 +136,6 @@ const AddProduct = () => {
       });
       const { storageId } = await response.json();
 
-      // Add product to Convex
       await addProduct({
         images: [storageId],
         title: formData.identifiedProduct,
@@ -153,7 +151,9 @@ const AddProduct = () => {
       });
 
       Alert.alert("Success", "Product added successfully!");
-      router.back();
+      router.push({
+        pathname: "/create",
+      });
     } catch (error) {
       console.error("Error adding product:", error);
       Alert.alert("Error", "Failed to add product. Please try again.");
@@ -162,28 +162,30 @@ const AddProduct = () => {
     }
   };
 
-  // Render nothing while userProfile is loading
+  if (!userProfile) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size='large' color={colors.brand.default} />
+        <Text className='mt-4 dark:text-white'>Loading user profile...</Text>
+      </View>
+    );
+  }
+
   if (!userProfile?._id) {
+    Alert.alert("Error", "User profile not loaded. Please try again.");
+    router.push({
+      pathname: "/create",
+    });
     return null;
   }
-  const CreateIcon = () => {
-    return (
-      <View
-        className={`rounded-full p-2 absolute w-20 h-20 items-center justify-center`}
-        style={{
-          backgroundColor: colors.brand.default,
-        }}
-      ></View>
-    );
-  };
 
   const handleOption = (source: "camera" | "gallery") => {
     Haptics.selectionAsync();
     router.push({
       pathname: "/create",
-      params: { source },
     });
   };
+
   return (
     <ScrollView className='flex-1 bg-white dark:bg-slate-900'>
       <View className='relative'>
@@ -199,7 +201,6 @@ const AddProduct = () => {
           }}
           className='w-full h-72 bg-gray-200'
         />
-        {/* Sell an Item and Upload Image Buttons */}
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={styles.sellButton}
@@ -389,16 +390,17 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default Page;
+
 const styles = StyleSheet.create({
   buttonContainer: {
     position: "absolute",
-    bottom: 70, // Position above the tab bar (adjust based on tab bar height)
+    bottom: 70,
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     width: "100%",
-    gap: 10, // Space between buttons
+    gap: 10,
   },
   sellButton: {
     backgroundColor: "white",

@@ -7,6 +7,7 @@ import {
   Pressable,
   Image,
   useColorScheme,
+  Dimensions,
 } from "react-native";
 import React, { useContext } from "react";
 
@@ -20,13 +21,19 @@ import { useCart } from "@/utils/Store";
 const Page = () => {
   const { colors, theme } = useContext(ThemeContext);
   const cart = useCart((state) => state.cart);
-  const cartCount = cart.length; // Assuming cart is an array of product dat
+  const cartCount = cart.length;
+  const screenHeight = Dimensions.get("window").height;
 
   const router = useRouter();
 
   return (
     <SafeAreaView
-      style={{ flex: 1, backgroundColor: colors.background.secondary }}
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.background.secondary,
+      }}
     >
       <View
         style={{
@@ -62,19 +69,18 @@ const Page = () => {
             }}
             ListEmptyComponent={() => {
               return (
-                <Text
+                <View
                   style={{
-                    padding: 20,
-                    fontSize: 16,
-                    color: colors.text.secondary,
-                    flex: 1,
+                    height: screenHeight * 0.7,
                     justifyContent: "center",
                     alignItems: "center",
-                    textAlign: "center",
                   }}
                 >
-                  No products
-                </Text>
+                  <Image
+                    source={require("@/assets/images/illustrations/empty-cart.png")}
+                    style={{ width: 200, height: 200 }}
+                  />
+                </View>
               );
             }}
             ItemSeparatorComponent={() => (

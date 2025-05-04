@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Image } from "react-native";
 import React, { useContext } from "react";
 import { useFavourites } from "@/utils/Store";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,14 +24,6 @@ const Page = () => {
       className='flex-1'
       style={{ backgroundColor: colors.background.primary }}
     >
-      <View className='px-5'>
-        <Text
-          className='text-md font-regular mb-4'
-          style={{ color: colors.text.secondary }}
-        >
-          {favouritesCount} Favourite item
-        </Text>
-      </View>
       <FlatList
         data={favourites}
         renderItem={({ item }) => {
@@ -52,7 +44,20 @@ const Page = () => {
           ) : null;
         }}
         ListEmptyComponent={() => {
-          return <Text className='px-5'>No products</Text>;
+          return (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("@/assets/images/illustrations/no-wishlist.png")}
+                style={{ width: 200, height: 200 }}
+              />
+            </View>
+          );
         }}
         ItemSeparatorComponent={() => (
           <View

@@ -1,4 +1,4 @@
-import { View, Text, FlatList } from "react-native";
+import { View, Text, FlatList, Dimensions, Image } from "react-native";
 import React, { useContext } from "react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
@@ -11,6 +11,9 @@ import { ThemeContext } from "@/providers/ThemeProvider";
 const Page = () => {
   const { colors } = useContext(ThemeContext);
   // const { userProfile } = useUserProfile();
+
+  const screenHeight = Dimensions.get("window").height;
+
   const userProfile = {
     _creationTime: 1745075425708.771,
     _id: "jd777hjdbxa16v8yhn33xsr52s7ebzm8",
@@ -147,7 +150,20 @@ const Page = () => {
           ) : null;
         }}
         ListEmptyComponent={() => {
-          return <Text className='px-5'>No products</Text>;
+          return (
+            <View
+              style={{
+                height: screenHeight * 0.7,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Image
+                source={require("@/assets/images/illustrations/no-products.png")}
+                style={{ width: 300, height: 340 }}
+              />
+            </View>
+          );
         }}
       />
     </SafeAreaView>

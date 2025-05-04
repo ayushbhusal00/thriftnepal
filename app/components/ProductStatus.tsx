@@ -240,7 +240,6 @@ const ProductStatus = ({ item }: { item: Product }) => {
                 <ShareFat size={20} color='#314B57' />
               </Pressable>
             </View>
-            ;
           </View>
         </View>
       </View>

@@ -11,6 +11,7 @@ import {
   BookOpenText,
   CaretLeft,
   CaretRight,
+  HeartHalf,
   Lamp,
   Package,
   SignOut,
@@ -97,7 +98,23 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
                   color: colors.text.secondary,
                 }}
               >
-                Your Orders
+                My Orders
+              </Text>
+            </View>
+            <CaretRight size={24} color={colors.text.secondary} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => router.push(`./Favourites`)}>
+          <View className='px-6 py-4 flex-row justify-between items-center'>
+            <View className='flex-row gap-4 items-center '>
+              <HeartHalf size={24} color={colors.text.secondary} />
+              <Text
+                className={`text-subhead-1`}
+                style={{
+                  color: colors.text.secondary,
+                }}
+              >
+                My Favourites
               </Text>
             </View>
             <CaretRight size={24} color={colors.text.secondary} />

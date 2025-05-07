@@ -265,6 +265,7 @@ const Page = () => {
       }}
     >
       {renderHeader()}
+
       <FlatList
         style={{ padding: 10, flex: 1 }}
         data={allProducts}

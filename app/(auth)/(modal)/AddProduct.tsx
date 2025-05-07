@@ -77,6 +77,7 @@ const Page = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [image, setImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
 
   const [formData, setFormData] = useState<Product>({
     brand: params.brand || "",
@@ -88,7 +89,7 @@ const Page = () => {
     featureHighlights: params.featureHighlights || "",
     productCategory: params.productCategory || "",
     verbalDescription: params.verbalDescription || "",
-    userId: userProfile?._id || ("" as Id<"users">), // Fallback (will be overridden by check)
+    userId: userProfile?._id || ("" as Id<"users">),
     approved: false,
     imageUri: params.imageUri || "",
   });
@@ -169,6 +170,54 @@ const Page = () => {
     }
   }, []);
 
+  const handleFillWithAI = async () => {
+    if (!formData.imageUri) {
+      Alert.alert("Error", "Please upload an image before using AI analysis.");
+      return;
+    }
+
+    setAiLoading(true);
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ image: formData.imageUri }),
+      });
+
+      const result = await response.json();
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Failed to analyze image");
+      }
+
+      const { productAnalysis } = result.data;
+      setFormData((prev) => ({
+        ...prev,
+        brand: productAnalysis.brand || prev.brand,
+        identifiedProduct:
+          productAnalysis.identifiedProduct || prev.identifiedProduct,
+        size: productAnalysis.size || prev.size,
+        condition: productAnalysis.condition || prev.condition,
+        estimatedCost: productAnalysis.estimatedCost || prev.estimatedCost,
+        fabricsUsed: productAnalysis.fabricsUsed || prev.fabricsUsed,
+        featureHighlights:
+          productAnalysis.featureHighlights || prev.featureHighlights,
+        productCategory:
+          productAnalysis.productCategory || prev.productCategory,
+        verbalDescription:
+          productAnalysis.verbalDescription || prev.verbalDescription,
+      }));
+
+      Alert.alert("Success", "Form filled with AI-generated data!");
+    } catch (error) {
+      console.error("Error in AI analysis:", error);
+      Alert.alert("Error", "Failed to analyze image. Please try again.");
+    } finally {
+      setAiLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (!source) return;
     if (source === "camera") {
@@ -178,7 +227,6 @@ const Page = () => {
     }
   }, [source, handleImageUpload]);
 
-  // Log userProfile for debugging
   useEffect(() => {
     console.log("userProfile:", userProfile);
     console.log("userProfile._id:", userProfile?._id);
@@ -344,7 +392,13 @@ const Page = () => {
             </Text>
 
             {formData.imageUri ? (
-              <View style={{ alignItems: "center", width: "100%" }}>
+              <View
+                style={{
+                  alignItems: "center",
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
                 <Image
                   source={{ uri: formData.imageUri }}
                   style={{
@@ -354,6 +408,25 @@ const Page = () => {
                     marginBottom: 10,
                   }}
                 />
+                <TouchableOpacity
+                  onPress={handleFillWithAI}
+                  disabled={aiLoading}
+                  style={{
+                    backgroundColor: aiLoading
+                      ? colors.brand.interactive
+                      : colors.brand.default,
+                    padding: 10,
+                    borderRadius: 5,
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                    zIndex: 1,
+                  }}
+                >
+                  <Text style={{ color: "white" }}>
+                    {aiLoading ? "Analyzing..." : "Fill with AI"}
+                  </Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() =>
                     setFormData((prev) => ({ ...prev, imageUri: "" }))

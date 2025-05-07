@@ -130,12 +130,13 @@ const Page = () => {
             ? colors.background.secondary
             : colors.background.primary,
         flex: 1,
+        gap: 8,
       }}
     >
       <View className='px-5'>
         <Text
-          className={`text-md font-regular mb-4`}
-          style={{ color: colors.text.secondary }}
+          className={`text-2xl font-dmsans mb-4`}
+          style={{ color: colors.text.primary }}
         >
           Your Listings
         </Text>

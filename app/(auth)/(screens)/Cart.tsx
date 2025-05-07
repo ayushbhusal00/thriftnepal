@@ -4,9 +4,7 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
-  Pressable,
   Image,
-  useColorScheme,
   Dimensions,
 } from "react-native";
 import React, { useContext } from "react";
@@ -30,8 +28,6 @@ const Page = () => {
     <SafeAreaView
       style={{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
         backgroundColor: colors.background.secondary,
       }}
     >
@@ -43,6 +39,7 @@ const Page = () => {
       >
         <View
           style={{
+            flex: 1,
             margin: 20,
           }}
         >
@@ -53,6 +50,7 @@ const Page = () => {
                 <View
                   style={{
                     flex: 1,
+                    width: "100%", // Ensure full width within the FlatList
                   }}
                 >
                   <ProductList
@@ -74,6 +72,7 @@ const Page = () => {
                     height: screenHeight * 0.7,
                     justifyContent: "center",
                     alignItems: "center",
+                    width: "100%", // Ensure full width
                   }}
                 >
                   <Image
@@ -92,7 +91,7 @@ const Page = () => {
                 }}
               />
             )}
-            contentContainerStyle={{ paddingBottom: 100 }}
+            contentContainerStyle={{ paddingBottom: 100, width: "100%" }}
           />
         </View>
         {cartCount !== 0 && (

@@ -1,9 +1,12 @@
 import { View, Text, TouchableOpacity, Image, Dimensions } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import { useOAuth } from "@clerk/clerk-expo";
 import { Ionicons } from "@expo/vector-icons";
+import { ThemeContext } from "@/providers/ThemeProvider";
+import { CaretRight } from "phosphor-react-native";
 
 const Page = () => {
+  const { theme, colors } = useContext(ThemeContext);
   const { startOAuthFlow: startFacebookOAuthFlow } = useOAuth({
     strategy: "oauth_facebook",
   });
@@ -46,67 +49,149 @@ const Page = () => {
     }
   };
   return (
-    <View className='flex-1 items-start justify-start bg-[#ffffff]'>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.background.primary,
+      }}
+    >
       <Image
         source={require("@/assets/images/login.png")}
-        style={{ width: windowWidth, height: "40%" }}
-        className={`mb-4`}
+        style={{ width: windowWidth, height: "40%", marginBottom: 16 }}
       />
       <View
         className={`w-full items-center justify-center flex-1 flex-col gap-4`}
       >
         <View className='flex flex-col gap-1'>
-          <Text className='text-3xl font-bold'>
-            Welcome to <Text className='text-[#AD5691]'>ThriftyNepal</Text>
+          <Text
+            style={{
+              color: colors.text.primary,
+              textAlign: "center",
+            }}
+            className='text-3xl font-bold'
+          >
+            Welcome to{" "}
+            <Text style={{ color: colors.brand.default }}>ThriftyNepal</Text>
           </Text>
-          <Text className='text-lg text-neutral-500'>
+          <Text
+            className='text-lg'
+            style={{
+              color: colors.text.secondary,
+            }}
+          >
             Sign in to your account to get started
           </Text>
         </View>
         <View className='flex-col p-6 gap-4'>
           <TouchableOpacity
-            className='border-solid border border-neutral-200 rounded-md elevation-md px-6 py-3 flex-row items-center gap-4'
+            style={{
+              borderColor: colors.background.border,
+              backgroundColor:
+                theme === "light"
+                  ? colors.background.primary
+                  : colors.background.secondary,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderStyle: "solid",
+              width: "90%",
+            }}
             onPress={handleFacebookLogin}
           >
-            <Image
-              width={40}
-              height={40}
+            <View
               style={{
-                width: 40,
-                height: 40,
-                justifyContent: "center",
+                display: "flex",
+                flexDirection: "row",
+                gap: 6,
                 alignItems: "center",
               }}
-              source={require("@/assets/images/facebook.png")}
+            >
+              <Image
+                width={40}
+                height={40}
+                style={{
+                  width: 40,
+                  height: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                source={require("@/assets/images/facebook.png")}
+              />
+              <Text
+                style={{ color: colors.text.primary }}
+                className='text-lg text-bold'
+              >
+                Continue with Facebook
+              </Text>
+            </View>
+            <CaretRight
+              size={20}
+              weight='regular'
+              color={colors.text.secondary}
             />
-            <Text className='text-lg text-bold text-neutral-900'>
-              Continue with Facebook
-            </Text>
-            <Ionicons name='chevron-forward-outline' size={20} color='black' />
           </TouchableOpacity>
           <TouchableOpacity
-            className='border-solid border border-neutral-200 rounded-md elevation-md px-6 py-3 flex-row items-center gap-4'
+            style={{
+              borderColor: colors.background.border,
+              backgroundColor:
+                theme === "light"
+                  ? colors.background.primary
+                  : colors.background.secondary,
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingVertical: 8,
+              borderRadius: 8,
+              borderWidth: 1,
+              borderStyle: "solid",
+            }}
             onPress={handleGoogleLogin}
           >
-            <Image
-              width={40}
-              height={40}
+            <View
               style={{
-                width: 40,
-                height: 40,
-                justifyContent: "center",
+                display: "flex",
+                flexDirection: "row",
+                gap: 6,
                 alignItems: "center",
               }}
-              source={require("@/assets/images/google.png")}
+            >
+              <Image
+                width={40}
+                height={40}
+                style={{
+                  width: 40,
+                  height: 40,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+                source={require("@/assets/images/google.png")}
+              />
+              <Text
+                style={{ color: colors.text.primary }}
+                className='text-lg text-bold'
+              >
+                Continue with Google
+              </Text>
+            </View>
+            <CaretRight
+              size={20}
+              weight='regular'
+              color={colors.text.secondary}
             />
-            <Text className='text-lg text-bold text-neutral-900'>
-              Continue with Google
-            </Text>
-            <Ionicons name='chevron-forward-outline' size={20} color='black' />
           </TouchableOpacity>
         </View>
         <Text className='text-lg text-bold text-blue-500'>
-          Continue as guest
+          <Text style={{ color: colors.text.primary }}>I agree to the </Text>{" "}
+          Privacy & Terms
         </Text>
       </View>
     </View>

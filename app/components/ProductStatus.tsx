@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { Ionicons } from "@expo/vector-icons";
 import {
+  CaretRight,
   Check,
   Heart,
   Hourglass,
@@ -28,11 +29,14 @@ interface Product {
 const ProductStatus = ({ item }: { item: Product }) => {
   const router = useRouter();
   // console.log(item.title, item.sold, item.approved);
-  const { colors } = useContext(ThemeContext);
+  const { theme, colors } = useContext(ThemeContext);
   const removeFavourite = useFavourites((state) => state.removeFavourites);
   const removeFromCart = useCart((state) => state.removeCart);
   return (
-    <View
+    <Pressable
+      onPress={() => {
+        router.push(`/product/${item._id}`);
+      }}
       style={{
         width: "100%",
         flex: 1,
@@ -48,7 +52,10 @@ const ProductStatus = ({ item }: { item: Product }) => {
         },
         shadowOpacity: 0.4,
         shadowRadius: 0.5,
-        backgroundColor: colors.background.primary,
+        backgroundColor:
+          theme === "light"
+            ? colors.background.primary
+            : colors.background.secondary,
       }}
     >
       <View
@@ -75,22 +82,26 @@ const ProductStatus = ({ item }: { item: Product }) => {
               padding: 16,
             }}
           >
-            <View style={{ position: "relative" }}>
+            <View
+              style={{
+                position: "relative",
+              }}
+            >
               {item.images.map((uri, index) => (
                 <Image
-                  style={{ borderRadius: 10 }}
+                  style={{ borderRadius: 6 }}
                   key={index}
                   source={{ uri: item.imageUrls[index] }}
                   accessibilityLabel={`Image for product"}`}
-                  width={80}
-                  height={62}
+                  width={52}
+                  height={52}
                 />
               ))}
               {item.approved && (
                 <View
                   style={{
-                    width: 16,
-                    height: 16,
+                    width: 12,
+                    height: 12,
                     position: "absolute",
                     bottom: -6,
                     right: -6,
@@ -105,7 +116,7 @@ const ProductStatus = ({ item }: { item: Product }) => {
             <View
               style={{
                 flexDirection: "column",
-                gap: 12,
+                gap: 2,
                 width: "100%",
                 flex: 1,
               }}
@@ -113,137 +124,28 @@ const ProductStatus = ({ item }: { item: Product }) => {
               <Text
                 style={{
                   fontWeight: "600",
-                  fontSize: 16,
+                  fontSize: 14,
                   color: colors.text.primary,
                 }}
                 numberOfLines={2}
               >
                 {item.title}
               </Text>
-            </View>
-          </View>
-          <View
-            style={{
-              borderTopColor: colors.background.border,
-              borderTopWidth: 0.25,
-              paddingVertical: 24,
-              paddingHorizontal: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "600",
-                fontSize: 16,
-                color: colors.text.primary,
-              }}
-            >
-              ₹ {item.price}
-            </Text>
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: 8,
-                justifyContent: "flex-start",
-              }}
-            >
-              {item.approved ? (
-                <Pressable
-                  style={{
-                    backgroundColor: colors.background.primary,
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 8,
-                    justifyContent: "center",
-
-                    shadowColor: "#000",
-                    shadowOffset: {
-                      width: 0,
-                      height: 1,
-                    },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 0.5,
-
-                    borderColor: colors.background.border,
-                    borderWidth: 0.25,
-                  }}
-                  onPress={() => console.log("Sold Offline")}
-                >
-                  <Check size={20} color={colors.text.secondary} />
-                  <Text
-                    style={{ color: colors.text.primary, fontWeight: "600" }}
-                  >
-                    Mark as Sold
-                  </Text>
-                </Pressable>
-              ) : (
-                <Pressable
-                  style={{
-                    backgroundColor: colors.background.primary,
-                    paddingHorizontal: 12,
-                    paddingVertical: 8,
-                    borderRadius: 8,
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: 6,
-                    justifyContent: "center",
-                    shadowColor: "#000",
-                    shadowOffset: {
-                      width: 0,
-                      height: 1,
-                    },
-                    shadowOpacity: 0.4,
-                    shadowRadius: 0.5,
-
-                    borderColor: colors.background.border,
-                    borderWidth: 0.25,
-                  }}
-                  onPress={() => console.log("Sold Online")}
-                >
-                  <Hourglass size={20} color={colors.text.secondary} />
-                  <Text
-                    style={{ color: colors.text.primary, fontWeight: "600" }}
-                  >
-                    Awaiting review
-                  </Text>
-                </Pressable>
-              )}
-              <Pressable
+              <Text
                 style={{
-                  backgroundColor: colors.background.primary,
-                  paddingHorizontal: 12,
-                  paddingVertical: 8,
-                  borderRadius: 8,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 6,
-                  justifyContent: "center",
-                  shadowColor: "#000",
-                  shadowOffset: {
-                    width: 0,
-                    height: 1,
-                  },
-                  shadowOpacity: 0.4,
-                  shadowRadius: 0.5,
-
-                  borderColor: colors.background.border,
-                  borderWidth: 0.25,
+                  fontWeight: "500",
+                  fontSize: 14,
+                  color: colors.text.primary,
                 }}
-                onPress={() => console.log("Share in Story")}
               >
-                <ShareFat size={20} color='#314B57' />
-              </Pressable>
+                ₹ {item.price}
+              </Text>
             </View>
+            <CaretRight size={20} color={colors.text.secondary} />
           </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

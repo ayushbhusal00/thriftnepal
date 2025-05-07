@@ -3,10 +3,10 @@ import { router, Stack } from "expo-router";
 import { CaretLeft, SignOut } from "phosphor-react-native";
 import { useContext } from "react";
 import { Text, TouchableOpacity } from "react-native";
-
+import { useAuth } from "@clerk/clerk-expo";
 const Layout = () => {
   const { colors } = useContext(ThemeContext);
-
+  const { signOut } = useAuth();
   return (
     <Stack
       screenOptions={{
@@ -25,14 +25,19 @@ const Layout = () => {
             backgroundColor: colors.background.secondary,
           },
           headerRight: () => (
-            <TouchableOpacity onPress={() => router.replace("/")}>
+            <TouchableOpacity
+              onPress={() => {
+                signOut(); // Sign out using Clerk's signOut ap
+                return router.dismissTo("/");
+              }}
+            >
               <SignOut size={24} color={colors.text.secondary} />
             </TouchableOpacity>
           ),
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.replace("/")} // Navigate to root
+              onPress={() => router.dismissTo("/")} // Navigate to root
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>
@@ -50,7 +55,7 @@ const Layout = () => {
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.replace("/")} // Navigate to Profile screen
+              onPress={() => router.dismissTo("/")} // Navigate to Profile screen
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>
@@ -68,7 +73,7 @@ const Layout = () => {
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.replace("/Profile")} // Navigate to Profile screen
+              onPress={() => router.dismissTo("/Profile")} // Navigate to Profile screen
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>
@@ -86,7 +91,7 @@ const Layout = () => {
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.replace("/Profile")} // Navigate to Profile screen
+              onPress={() => router.dismissTo("/Profile")} // Navigate to Profile screen
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>

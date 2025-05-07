@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, Pressable } from "react-native";
 import { useLocalSearchParams, router } from "expo-router";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const FailurePage: React.FC = () => {
+  const { colors } = useContext(ThemeContext);
   const { message, data } = useLocalSearchParams<{
     message: string;
     data: string;
@@ -26,13 +28,53 @@ const FailurePage: React.FC = () => {
   updateTransactionStatus(parsedData.transaction_uuid, "failed");
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Payment Status</Text>
-      <Text style={styles.message}>{message || "Payment Failed!"}</Text>
-      <Text style={styles.details}>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: colors.background.primary,
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 24,
+          marginBottom: 20,
+          textAlign: "center",
+          color: colors.text.primary,
+        }}
+      >
+        Payment Status
+      </Text>
+      <Text
+        style={{
+          fontSize: 18,
+          marginBottom: 20,
+          textAlign: "center",
+          color: "red",
+        }}
+      >
+        {message || "Payment Failed!"}
+      </Text>
+      <Text
+        style={{
+          fontSize: 16,
+          marginBottom: 10,
+          textAlign: "center",
+          color: colors.text.secondary,
+        }}
+      >
         Transaction UUID: {parsedData.transaction_uuid || "N/A"}
       </Text>
-      <Text style={styles.details}>
+      <Text
+        style={{
+          fontSize: 16,
+          marginBottom: 10,
+          textAlign: "center",
+          color: colors.text.secondary,
+        }}
+      >
         Reason: {parsedData.reason || "Unknown error"}
       </Text>
       <Pressable
@@ -55,19 +97,6 @@ const FailurePage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  title: { fontSize: 24, marginBottom: 20, textAlign: "center" },
-  message: {
-    fontSize: 18,
-    marginBottom: 20,
-    textAlign: "center",
-    color: "red",
-  },
   details: { fontSize: 16, marginBottom: 10, textAlign: "center" },
 });
 

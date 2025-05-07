@@ -34,7 +34,7 @@ interface Product {
 }
 
 const ProductFeed = ({ item }: { item: Product }) => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, colors } = useContext(ThemeContext);
   const { removeFavourites, addFavourites, favourites } = useFavourites();
   const { addCart } = useCart();
   const user = useQuery(api.users.getUserById, { userId: item.userId });
@@ -51,10 +51,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
       accessibilityLabel={`View details for ${item.title}`}
       style={{
         flex: 1,
-        backgroundColor:
-          theme === "light"
-            ? themes.light.background.primary
-            : themes.dark.background.secondary,
+        backgroundColor: colors.background.primary,
       }}
       onPress={() => {
         router.push(`/product/${item._id}`);
@@ -118,11 +115,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
                     <Heart
                       size={24}
                       color={
-                        isFavourite
-                          ? themes.light.brand.default
-                          : theme === "light"
-                            ? themes.light.text.onColor
-                            : themes.dark.text.onColor
+                        isFavourite ? colors.brand.default : colors.text.onColor
                       }
                       weight={isFavourite ? "fill" : "duotone"}
                     />

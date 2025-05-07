@@ -8,6 +8,7 @@ import {
   Pressable,
   ActivityIndicator,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState, useContext, useEffect } from "react";
@@ -101,18 +102,137 @@ export default function Page() {
   // };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background.primary }}>
+    <ScrollView style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <View
         style={{
-          height: screenHeight * 0.7,
           justifyContent: "center",
           alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          padding: 20,
         }}
       >
-        <Image
-          source={require("@/assets/images/illustrations/start-selling.png")}
-          style={{ width: 300, height: 340 }}
-        />
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 12,
+            width: "100%",
+            alignItems: "center",
+            paddingVertical: 20,
+          }}
+        >
+          <Image
+            source={require("@/assets/images/list.png")}
+            style={{ width: 160, height: "100%", resizeMode: "contain" }}
+          />
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              gap: 4,
+              flex: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.text.primary,
+                textAlign: "left",
+                marginTop: 20,
+              }}
+            >
+              01. List
+            </Text>
+            <Text style={{ color: colors.text.secondary }}>
+              Include well-lit photographs, be descriptive, and pick a good
+              price.
+            </Text>
+          </View>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 12,
+            width: "100%",
+            alignItems: "center",
+            paddingVertical: 20,
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              gap: 4,
+              flex: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.text.primary,
+                textAlign: "left",
+                marginTop: 20,
+              }}
+            >
+              01. List
+            </Text>
+            <Text style={{ color: colors.text.secondary }}>
+              Include well-lit photographs, be descriptive, and pick a good
+              price.
+            </Text>
+          </View>
+          <Image
+            source={require("@/assets/images/shipping.png")}
+            style={{ width: 160, height: "100%", resizeMode: "contain" }}
+          />
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 12,
+            width: "100%",
+            alignItems: "center",
+            paddingVertical: 20,
+          }}
+        >
+          <Image
+            source={require("@/assets/images/get-paid.png")}
+            style={{ width: 160, height: "100%", resizeMode: "contain" }}
+          />
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              gap: 4,
+              flex: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: "bold",
+                color: colors.text.primary,
+                textAlign: "left",
+                marginTop: 20,
+              }}
+            >
+              01. List
+            </Text>
+            <Text style={{ color: colors.text.secondary }}>
+              Include well-lit photographs, be descriptive, and pick a good
+              price.
+            </Text>
+          </View>
+        </View>
       </View>
       <View style={{ padding: 20 }}>
         <TouchableOpacity
@@ -123,7 +243,7 @@ export default function Page() {
             alignItems: "center",
             marginBottom: 20,
           }}
-          onPress={() => router.push("/addProduct")}
+          onPress={() => router.push("/(auth)/(modal)/AddProduct")}
         >
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Sell new product
@@ -157,6 +277,6 @@ export default function Page() {
           </Text>
         </TouchableOpacity>
       </View> */}
-    </View>
+    </ScrollView>
   );
 }

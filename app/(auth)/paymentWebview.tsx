@@ -56,7 +56,7 @@ const PaymentWebView: React.FC = () => {
     // Check if the URL matches the success_url
     //undo here
     // if (url.includes("http://localhost:3000/success")) {
-    if (url.includes("https://thriftnepal.vercel.app//success")) {
+    if (url.includes("https://thriftnepal.vercel.app/success")) {
       // Extract query parameters from the URL
       const params = new URLSearchParams(url.split("?")[1]);
       const rawData = params.get("data"); // Get the base64-encoded data string
@@ -75,7 +75,6 @@ const PaymentWebView: React.FC = () => {
       // Navigate to the success page with the decoded data
       router.replace({
         pathname: "/success",
-
         params: {
           message: "Payment successful",
           data: JSON.stringify(data),

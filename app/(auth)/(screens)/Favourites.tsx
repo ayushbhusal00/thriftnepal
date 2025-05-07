@@ -28,9 +28,7 @@ const Page = () => {
         data={favourites}
         renderItem={({ item }) => {
           return item && typeof item.brand === "string" ? (
-            <View
-              className={`bg-[${colors.background.secondary}] rounded-lg border-1 border-[${colors.background.border}] mx-4 `}
-            >
+            <View className='mx-6'>
               <ProductList
                 icon='Heart'
                 item={{

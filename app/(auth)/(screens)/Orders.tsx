@@ -1,14 +1,15 @@
-import { View, Text } from "react-native";
-import React from "react";
+import { View, Text, useColorScheme } from "react-native";
+import React, { useContext } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { Image } from "react-native";
+import { ThemeContext } from "@/providers/ThemeProvider";
 
 const Page = () => {
   // Uncomment to use real user profile hook
   // const { userProfile } = useUserProfile();
-
+  const { colors } = useContext(ThemeContext);
   // Mock user profile data
   const userProfile = {
     _creationTime: 1745075425708.771,
@@ -105,12 +106,37 @@ const Page = () => {
   );
 
   return (
-    <View className='m-6'>
+    <View
+      style={{
+        flex: 1,
+        padding: 20,
+        backgroundColor: colors.background.secondary,
+      }}
+    >
       {filteredCartItems.length > 0 ? (
         filteredCartItems.map((item) => (
           <View
             key={item._id}
-            className='flex-row gap-4 bg-white p-6 mb-4 rounded-lg shadow'
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 12,
+              padding: 16,
+              marginBottom: 16,
+              borderRadius: 12,
+              backgroundColor: colors.background.primary,
+              shadowColor: "#000",
+              borderColor: colors.background.border,
+              borderWidth: 0.25,
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+            }}
+            className='flex-row gap-4 p-6 mb-4 rounded-lg shadow'
           >
             <Image
               source={{ uri: item.imageUrls[0] }}
@@ -118,10 +144,17 @@ const Page = () => {
               className='w-32 h-32 object-contain rounded-lg'
             />
             <View className='flex-1 flex-col'>
-              <Text className='text-lg font-semibold'>{item.title}</Text>
-              <Text className='text-gray-600'>{item.brand}</Text>
-              <Text className='text-gray-600'>Price: ${item.price / 100}</Text>
-              <Text className='text-gray-600'>
+              <Text
+                style={{ color: colors.text.primary }}
+                className='text-lg font-semibold'
+              >
+                {item.title}
+              </Text>
+              <Text style={{ color: colors.text.secondary }}>{item.brand}</Text>
+              <Text style={{ color: colors.text.secondary }}>
+                Price: ${item.price / 100}
+              </Text>
+              <Text style={{ color: colors.text.secondary }}>
                 Status:{" "}
                 {
                   getTransactionsByUserId.find((t) =>

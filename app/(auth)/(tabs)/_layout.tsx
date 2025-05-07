@@ -55,6 +55,8 @@ const Layout = () => {
           name='create'
           options={{
             title: "Add new Product",
+            headerStyle: { backgroundColor: colors.background.secondary },
+            headerTintColor: colors.text.primary,
             tabBarIcon({ color, size }) {
               return <PlusSquare size={size} color={color} weight='duotone' />;
             },

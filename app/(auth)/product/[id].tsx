@@ -5,9 +5,12 @@ import {
   Pressable,
   ScrollView,
   Dimensions,
+  TouchableOpacity,
+  Platform,
+  StatusBar,
 } from "react-native";
 import React, { useContext } from "react";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
@@ -17,17 +20,18 @@ import {
   Cross,
   Heart,
   Hourglass,
+  HouseSimple,
   PencilSimpleLine,
   Ruler,
   TrashSimple,
   X,
 } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
-import { themes } from "@/utils/color-theme";
+
 import { useCart } from "@/utils/Store";
 
 const Page = () => {
-  const { colors, theme } = useContext(ThemeContext);
+  const { colors } = useContext(ThemeContext);
   const addCart = useCart((state) => state.addCart);
   const removeFromCart = useCart((state) => state.removeCart);
   const cart = useCart((state) => state.cart);
@@ -67,9 +71,54 @@ const Page = () => {
         flex: 1,
       }}
     >
-      <View style={{ marginBottom: 16 }}>
-        <Text className={`text-subhead-1 text-[${colors.text.secondary}]`}>
-          Product → {product?.title}
+      <View
+        style={{
+          marginBottom: 16,
+          flex: 1,
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          alignItems: "center",
+          gap: 16,
+          marginTop: Platform.OS === "ios" ? 60 : StatusBar.currentHeight,
+        }}
+      >
+        <TouchableOpacity onPress={() => router.dismissTo("/")}>
+          <HouseSimple color={colors.brand.default} weight='fill' />
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: colors.text.secondary,
+          }}
+          className={`text-subhead-1`}
+        >
+          /
+        </Text>
+        <TouchableOpacity onPress={() => router.navigate("/")}>
+          <Text
+            style={{
+              color: colors.text.secondary,
+            }}
+            className={`text-subhead-1`}
+          >
+            Product
+          </Text>
+        </TouchableOpacity>
+        <Text
+          style={{
+            color: colors.text.secondary,
+          }}
+          className={`text-subhead-1`}
+        >
+          /
+        </Text>
+        <Text
+          style={{
+            color: colors.text.secondary,
+          }}
+          className={`text-subhead-1`}
+        >
+          {product?.title}
         </Text>
       </View>
       <View>
@@ -138,14 +187,18 @@ const Page = () => {
         </View>
         <View className='flex-col gap-2 justify-between'>
           <Text
+            style={{ color: colors.text.primary }}
             numberOfLines={2}
-            className={`text-3xl font-medium color-[${colors.text.primary}]`}
+            className={`text-3xl font-medium`}
           >
             {product?.title}
           </Text>
         </View>
         <View className='flex-col gap-2 justify-between'>
-          <Text className={`text-xl font-medium ${colors.text.secondary}`}>
+          <Text
+            style={{ color: colors.text.secondary }}
+            className={`text-xl font-medium`}
+          >
             ₹ {product?.price}
           </Text>
         </View>

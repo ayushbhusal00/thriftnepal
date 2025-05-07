@@ -25,7 +25,7 @@ const ProductList = ({
   item: Product;
   icon: "Heart" | "Trash";
 }) => {
-  const { colors } = useContext(ThemeContext);
+  const { colors, theme } = useContext(ThemeContext);
   const removeFavourite = useFavourites((state) => state.removeFavourites);
   const removeFromCart = useCart((state) => state.removeCart);
   return (
@@ -45,7 +45,10 @@ const ProductList = ({
         },
         shadowOpacity: 0.4,
         shadowRadius: 1.41,
-        backgroundColor: colors.background.primary,
+        backgroundColor:
+          theme === "light"
+            ? colors.background.primary
+            : colors.background.secondary,
       }}
     >
       <View
@@ -85,7 +88,7 @@ const ProductList = ({
             <View
               style={{
                 flexDirection: "column",
-                gap: 12,
+                gap: 4,
                 width: "100%",
                 flex: 1,
               }}
@@ -99,6 +102,16 @@ const ProductList = ({
                 numberOfLines={2}
               >
                 {item.title}
+              </Text>
+              <Text
+                style={{
+                  fontWeight: "400",
+                  fontSize: 14,
+                  color: colors.text.primary,
+                }}
+                numberOfLines={2}
+              >
+                {item.brand}
               </Text>
             </View>
           </View>

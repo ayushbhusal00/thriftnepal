@@ -1,4 +1,11 @@
-import { View, Text, FlatList, Dimensions, Image } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 import React, { useContext } from "react";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useQuery } from "convex/react";
@@ -7,6 +14,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import ProductStatus from "@/app/components/ProductStatus";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeContext } from "@/providers/ThemeProvider";
+import { router } from "expo-router";
 
 const Page = () => {
   const { theme, colors } = useContext(ThemeContext);
@@ -154,15 +162,51 @@ const Page = () => {
           return (
             <View
               style={{
-                height: screenHeight * 0.7,
+                flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
+                width: "100%",
+                padding: 20,
+                height: screenHeight * 0.7,
               }}
             >
               <Image
-                source={require("@/assets/images/illustrations/no-products.png")}
-                style={{ width: 300, height: 340 }}
+                source={require("@/assets/images/ghost.png")}
+                style={{ width: 120, height: 120 }}
               />
+              <Text
+                className='text-h4'
+                style={{ color: colors.text.secondary, marginTop: 10 }}
+              >
+                Nothing Listed Yet
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/create");
+                }}
+                style={{
+                  flexDirection: "row",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 16,
+                  backgroundColor: colors.brand.default,
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 1,
+                  marginTop: 16,
+                }}
+              >
+                <Text
+                  style={{
+                    color: colors.text.onColor,
+                  }}
+                  className='text-paragraph-1 font-dmsans'
+                >
+                  Start Selling
+                </Text>
+              </TouchableOpacity>
             </View>
           );
         }}

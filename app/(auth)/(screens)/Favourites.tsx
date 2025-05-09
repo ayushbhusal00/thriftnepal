@@ -21,8 +21,10 @@ const Page = () => {
 
   return (
     <SafeAreaView
-      className='flex-1'
-      style={{ backgroundColor: colors.background.primary }}
+      style={{
+        flex: 1,
+        backgroundColor: colors.background.primary,
+      }}
     >
       <FlatList
         data={favourites}
@@ -48,12 +50,22 @@ const Page = () => {
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
+                padding: 16,
               }}
             >
               <Image
-                source={require("@/assets/images/illustrations/no-wishlist.png")}
+                source={require("@/assets/images/favourites.png")}
                 style={{ width: 200, height: 200 }}
               />
+              <Text className='text-h2 font-dmsans text-center'>
+                Favorites are empty for now
+              </Text>
+              <Text
+                className='text-paragraph-1 font-dmsans text-center'
+                style={{ color: colors.text.secondary }}
+              >
+                Save items here to let people know they're favorites
+              </Text>
             </View>
           );
         }}

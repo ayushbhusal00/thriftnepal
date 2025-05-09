@@ -89,7 +89,7 @@ const ProductFeed = ({ item }: { item: Product }) => {
                     source={{ uri: item.imageUrls[0] }}
                     className='rounded-lg overflow-clip w-full'
                     accessibilityLabel={`Image for product ${item.title}`}
-                    height={200}
+                    height={160}
                   />
                   <Pressable
                     accessibilityRole='button'
@@ -178,41 +178,3 @@ const ProductFeed = ({ item }: { item: Product }) => {
 };
 
 export default ProductFeed;
-
-const styles = StyleSheet.create({
-  buttonContainer: {
-    borderRadius: 10,
-    overflow: "hidden",
-  },
-  cartButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    justifyContent: "center",
-    alignItems: "center",
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    borderRadius: 10,
-  },
-  innerShadow: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "rgba(0, 0, 0, 0.1)",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 0,
-  },
-  text: {
-    fontSize: 16,
-    fontWeight: "600",
-  },
-});

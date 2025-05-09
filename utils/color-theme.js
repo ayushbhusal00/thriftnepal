@@ -10,7 +10,8 @@ export const themes = {
     text: {
       primary: "#211F26",
       secondary: "#65636D",
-      onColor:'#FFFFFF'
+      onColor:'#FFFFFF',
+      green: '#006933',
     },
     brand: {
       default: "#DF1995",
@@ -33,6 +34,7 @@ export const themes = {
       contrast: "#FFFFFF",
       border: "#3C393F",
       subtle:'#6F6D78',
+      green: '#006933',
     },
     text: {
       primary: "#EEEEF0",

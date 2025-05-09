@@ -26,15 +26,17 @@ const ProductList = ({
   icon: "Heart" | "Trash";
 }) => {
   const { colors, theme } = useContext(ThemeContext);
+  const { removeFavourites, addFavourites, favourites } = useFavourites();
   const removeFavourite = useFavourites((state) => state.removeFavourites);
   const removeFromCart = useCart((state) => state.removeCart);
+  const isFavourite = favourites.some((product) => product._id === item._id);
   return (
     <View
       style={{
         width: "100%",
         flex: 1,
         marginBottom: 16,
-        borderRadius: 10,
+        borderRadius: 16,
         borderWidth: 0.25,
         borderColor: colors.background.border,
         overflow: "hidden",
@@ -47,7 +49,7 @@ const ProductList = ({
         shadowRadius: 1.41,
         backgroundColor:
           theme === "light"
-            ? colors.background.primary
+            ? colors.background.secondary
             : colors.background.secondary,
       }}
     >
@@ -81,8 +83,8 @@ const ProductList = ({
                 key={index}
                 source={{ uri: item.imageUrls[index] }}
                 accessibilityLabel={`Image for product"}`}
-                width={80}
-                height={62}
+                width={120}
+                height={120}
               />
             ))}
             <View
@@ -113,57 +115,62 @@ const ProductList = ({
               >
                 {item.brand}
               </Text>
+
+              <Text
+                style={{
+                  fontWeight: "600",
+                  fontSize: 16,
+                  color: colors.text.green,
+                  marginTop: 8,
+                  marginBottom: 8,
+                }}
+              >
+                ₹ {item.price}
+              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 12,
+                }}
+              >
+                <Pressable
+                  onPress={() => {
+                    isFavourite
+                      ? removeFavourites(item._id)
+                      : addFavourites({
+                          ...item,
+                          category: "",
+                          size: "",
+                          condition: "",
+                        });
+                  }}
+                >
+                  <Heart
+                    size={24}
+                    color={colors.text.secondary}
+                    weight={isFavourite ? "fill" : "regular"}
+                  />
+                </Pressable>
+
+                <Pressable
+                  onPress={() => {
+                    removeFromCart(item._id);
+                  }}
+                >
+                  <Trash
+                    size={24}
+                    color={colors.text.secondary}
+                    weight='regular'
+                  />
+                </Pressable>
+              </View>
             </View>
-          </View>
-          <View
-            style={{
-              borderTopColor: colors.background.border,
-              borderTopWidth: 0.25,
-              paddingVertical: 24,
-              paddingHorizontal: 16,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "600",
-                fontSize: 16,
-                color: colors.text.primary,
-              }}
-            >
-              ₹ {item.price}
-            </Text>
-            <Pressable
-              onPress={() => {
-                if (icon === "Heart") removeFavourite(item._id);
-                if (icon === "Trash") removeFromCart(item._id);
-              }}
-            >
-              {icon === "Heart" && (
-                <Heart
-                  size={24}
-                  color={colors.brand.default}
-                  weight='fill'
-                  style={{
-                    width: 24,
-                    height: 24,
-                  }}
-                />
-              )}
-              {icon === "Trash" && (
-                <Trash
-                  size={24}
-                  color={colors.text.secondary}
-                  weight='fill'
-                  style={{
-                    width: 24,
-                    height: 24,
-                  }}
-                />
-              )}
-            </Pressable>
+            <Checkbox
+              value={false}
+              onValueChange={(value) => {}}
+              color={colors.brand.default}
+            />
           </View>
         </View>
       </View>

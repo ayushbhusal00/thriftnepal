@@ -18,52 +18,6 @@ const Layout = () => {
       }}
     >
       <Stack.Screen
-        name='Profile'
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: colors.background.secondary,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                signOut(); // Sign out using Clerk's signOut ap
-                return router.dismissTo("/");
-              }}
-            >
-              <SignOut size={24} color={colors.text.secondary} />
-            </TouchableOpacity>
-          ),
-          headerLeft: () => (
-            <TouchableOpacity
-              className='flex-row gap-2 items-center'
-              onPress={() => router.dismissTo("/")} // Navigate to root
-            >
-              <CaretLeft size={24} color={colors.text.secondary} />
-              <Text style={{ color: colors.text.secondary }}>Back</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
-        name='Cart'
-        options={{
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: colors.background.secondary,
-          },
-          headerLeft: () => (
-            <TouchableOpacity
-              className='flex-row gap-2 items-center'
-              onPress={() => router.dismissTo("/")} // Navigate to Profile screen
-            >
-              <CaretLeft size={24} color={colors.text.secondary} />
-              <Text style={{ color: colors.text.secondary }}>Back</Text>
-            </TouchableOpacity>
-          ),
-        }}
-      />
-      <Stack.Screen
         name='Orders'
         options={{
           headerShown: true,
@@ -73,7 +27,7 @@ const Layout = () => {
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.dismissTo("/Profile")} // Navigate to Profile screen
+              onPress={() => router.dismissTo("../profile")} // Navigate to Profile screen
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>
@@ -91,7 +45,7 @@ const Layout = () => {
           headerLeft: () => (
             <TouchableOpacity
               className='flex-row gap-2 items-center'
-              onPress={() => router.dismissTo("/Profile")} // Navigate to Profile screen
+              onPress={() => router.dismissTo("/profile")} // Navigate to Profile screen
             >
               <CaretLeft size={24} color={colors.text.secondary} />
               <Text style={{ color: colors.text.secondary }}>Back</Text>

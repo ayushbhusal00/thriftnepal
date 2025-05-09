@@ -44,6 +44,10 @@ module.exports = {
             DEFAULT: "#65636D",
             dark: "#B5B2BC",
           },
+          green:{
+            DEFAULT: "#006933",
+            dark: "#006933",
+          }
         },
         brand: {
           default: {

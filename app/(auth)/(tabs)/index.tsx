@@ -5,42 +5,74 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  FlatList,
   Pressable,
   TextInput,
   ActivityIndicator,
 } from "react-native";
+import PagerView from "react-native-pager-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useRouter } from "expo-router";
 import ProductFeed from "@/app/components/ProductFeed";
 import SkeletalLoader from "@/app/components/SkeletalLoader";
-
 import { ThemeContext } from "@/providers/ThemeProvider";
 import { useContext, useState, useCallback } from "react";
 import { useCart } from "@/utils/Store";
-import { Info } from "phosphor-react-native";
+import {
+  Copy,
+  CurrencyDollar,
+  Hamburger,
+  Info,
+  List,
+  MapPin,
+  MapPinSimpleLine,
+} from "phosphor-react-native";
+import Constants from "expo-constants";
+import { Id } from "@/convex/_generated/dataModel";
 
 const PAGE_SIZE = 5;
+
+interface Product {
+  _id: Id<"products">;
+  brand: string;
+  title: string;
+  category: string;
+  description: string;
+  size: string;
+  condition: string;
+  price: number;
+  images: string[];
+  userId: Id<"users">;
+  approved: boolean;
+}
+
+interface Story {
+  userId: Id<"users">;
+  storyImageUrls: string[];
+  userImageUrl?: string;
+}
 
 const Page = () => {
   const { colors, theme } = useContext(ThemeContext);
   const router = useRouter();
   const cartCount = useCart((state) => state.cartCount);
   const [cursor, setCursor] = useState<string | null>(null);
-  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [activePage, setActivePage] = useState(0); // Track active carousel page
 
-  const stories = useQuery(api.stories.list);
+  const stories = useQuery(api.stories.list) as Story[] | undefined;
   const paginatedProducts = useQuery(
     api.products.getApprovedAndNotSoldProducts,
     {
       cursor,
       pageSize: PAGE_SIZE,
     }
-  );
+  ) as
+    | { products: Product[]; nextCursor: string | null; isDone: boolean }
+    | undefined;
 
   const loadMoreProducts = useCallback(() => {
     if (!paginatedProducts || isLoadingMore || !hasMore) return;
@@ -54,276 +86,495 @@ const Page = () => {
     setIsLoadingMore(false);
   }, [paginatedProducts, isLoadingMore, hasMore]);
 
+  // Handling loading state
   if (!stories) {
     return (
       <SafeAreaView
-        className='flex-1'
-        style={{ backgroundColor: colors.background.primary }}
+        style={{ flex: 1, backgroundColor: colors.background.primary }}
       >
         <ActivityIndicator
           size='large'
           color={colors.brand.default}
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         />
-        {/* <Text
-          style={{
-            flex: 1,
-            color: colors.text.primary,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          Loading stories...
-        </Text> */}
       </SafeAreaView>
     );
   }
 
+  // Handling empty stories state
   if (stories.length === 0) {
     return (
-      <SafeAreaView className='flex-1'>
+      <SafeAreaView style={{ flex: 1 }}>
         <Text>No stories available</Text>
       </SafeAreaView>
     );
   }
 
+  const statusBarHeight = Constants.statusBarHeight;
+
+  // Rendering header section with location, coupon, search, and discount
   const renderHeader = () => (
-    <View
-      className='flex-row gap-2 sticky top-0 justify-between items-center pl-2 pr-4 py-4'
-      style={{ backgroundColor: colors.background.primary }}
-    >
-      <View className='flex-row items-center'>
-        <TextInput
-          placeholder='Search for products'
-          placeholderTextColor={colors.text.secondary}
-          className={`flex-row items-center flex-1 gap-4 p-4 border-hairline border-[${colors.background.border}] shadow-['red'] rounded-lg`}
+    <View style={{ flexDirection: "column" }}>
+      {/* Header top section with location and coupon */}
+      <View
+        style={{
+          flexDirection: "column",
+        }}
+      >
+        <View
           style={{
-            borderColor: colors.background.border,
-            borderWidth: 0.5,
-            color: colors.text.primary,
-            backgroundColor:
-              theme === "dark"
-                ? colors.background.secondary
-                : colors.background.primary,
-            marginHorizontal: 12,
-            boxShadow: `0 1 2px 0 ${colors.background.border} inset`,
-            shadowOffset: {
-              width: 0,
-              height: 1,
-            },
-            shadowColor: colors.background.contrast,
-            shadowOpacity: 0.2,
-            shadowRadius: 0.5,
+            flexDirection: "column",
+            backgroundColor: colors.brand.default,
+            paddingTop: statusBarHeight,
+            borderBottomEndRadius: 20,
+            borderBottomStartRadius: 20,
           }}
-          onFocus={(props) => {
-            props.target.setNativeProps({
-              style: {
-                borderColor: colors.accent.default,
-                boxShadow: `0 0 0 2px ${colors.accent.default} inset`,
-              },
-            });
-          }}
-          onBlur={(props) => {
-            props.target.setNativeProps({
-              style: {
-                shadowOffset: {
-                  width: 0,
-                  height: 1,
-                },
-                shadowColor: colors.background.contrast,
-                shadowOpacity: 0.2,
-                shadowRadius: 1,
-              },
-            });
-          }}
-        />
-        <View className='flex-row items-center gap-3'>
-          <Pressable
-            onPress={() => {
-              router.replace("./Profile");
+        >
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 16,
+              padding: 12,
+              paddingHorizontal: 24,
+              alignItems: "center",
             }}
           >
-            <Image
-              source={require("@/assets/images/placeholder.jpg")}
+            {/* Location display */}
+            <View
               style={{
-                width: 46,
-                height: 46,
-                borderRadius: 99,
-              }}
-            />
-          </Pressable>
-          <Pressable
-            onPress={() => {
-              router.replace("./Cart");
-            }}
-          >
-            <Image
-              source={require("@/assets/images/cart.jpg")}
-              style={{
-                width: 46,
-                height: 46,
-                borderRadius: 99,
-              }}
-            />
-            <Text
-              style={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                backgroundColor:
-                  cartCount === 0
-                    ? colors.background.contrast
-                    : colors.brand.default,
-                color: "white",
-                paddingHorizontal: 4,
-                paddingVertical: 2,
-                borderRadius: 99,
-                fontSize: 12,
-                fontWeight: "bold",
+                flex: 1,
+                flexDirection: "row",
+                gap: 4,
+                alignItems: "center",
               }}
             >
-              {cartCount}
+              <MapPinSimpleLine
+                size={32}
+                color={colors.text.onColor}
+                weight='fill'
+              />
+              <Text
+                style={{
+                  color: colors.text.onColor,
+                  fontSize: 16,
+                  fontWeight: "600",
+                }}
+              >
+                Kathmandu
+              </Text>
+            </View>
+            {/* Coupon display */}
+            <View
+              style={{
+                flexDirection: "row",
+                borderWidth: 1,
+                borderColor: colors.text.onColor,
+                borderRadius: 12,
+                paddingHorizontal: 8,
+                gap: 4,
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: colors.background.primary,
+                position: "relative",
+              }}
+            >
+              <Text
+                style={{
+                  color: colors.text.primary,
+                  fontSize: 20,
+                  fontWeight: "600",
+                  paddingRight: 30,
+                }}
+              >
+                3
+              </Text>
+              <Image
+                source={require("@/assets/images/coupon.png")}
+                style={{
+                  width: 32,
+                  height: 32,
+                  resizeMode: "contain",
+                  position: "absolute",
+                  right: 0,
+                  backgroundColor: colors.background.primary,
+                  borderRadius: 99,
+                }}
+              />
+            </View>
+          </View>
+
+          {/* Search bar section */}
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 8,
+              justifyContent: "space-between",
+              alignItems: "center",
+              paddingHorizontal: 16,
+              paddingTop: 16,
+              paddingBottom: 8,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", gap: 12, alignItems: "center" }}
+            >
+              {/* Menu button */}
+              <Pressable
+                onPress={() => router.replace("./Profile")}
+                style={{
+                  backgroundColor:
+                    theme === "light"
+                      ? colors.background.primary
+                      : colors.background.contrast,
+                  borderRadius: 12,
+                  padding: 10,
+                  shadowColor: colors.background.contrast,
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.2,
+                  shadowRadius: 0.5,
+                }}
+              >
+                <List
+                  size={24}
+                  color={
+                    theme === "light"
+                      ? colors.text.primary
+                      : colors.text.onColor
+                  }
+                  weight='regular'
+                />
+              </Pressable>
+              {/* Search input */}
+              <TextInput
+                placeholder='Search for products'
+                placeholderTextColor={colors.text.secondary}
+                style={{
+                  fontFamily: "dmsans",
+                  padding: 16,
+                  borderRadius: 12,
+                  flex: 1,
+                  color: colors.text.primary,
+                  backgroundColor:
+                    theme === "dark"
+                      ? colors.background.contrast
+                      : colors.background.primary,
+                }}
+                onFocus={(props) => {
+                  props.target.setNativeProps({
+                    style: {
+                      borderColor: colors.accent.default,
+                      boxShadow: `0 0 0 2px ${colors.accent.default} inset`,
+                    },
+                  });
+                }}
+                onBlur={(props) => {
+                  props.target.setNativeProps({
+                    style: { boxShadow: "none" },
+                  });
+                }}
+              />
+            </View>
+          </View>
+
+          {/* Discount section */}
+          <View
+            style={{
+              flexDirection: "row",
+              gap: 16,
+              padding: 12,
+              paddingHorizontal: 24,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "yellow",
+                fontFamily: "dmsans",
+                fontWeight: "700",
+                fontSize: 20,
+              }}
+            >
+              -500
             </Text>
-          </Pressable>
+            <View style={{ flex: 1 }}>
+              <Text
+                style={{
+                  color: colors.text.onColor,
+                  fontSize: 16,
+                  fontWeight: "700",
+                  fontStyle: "italic",
+                  fontFamily: "dmsans",
+                }}
+              >
+                First Time Discount
+              </Text>
+              <Text style={{ color: colors.text.onColor }}>
+                Get upto Rs. 500 off
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                borderWidth: 1,
+                borderColor: colors.text.onColor,
+                borderRadius: 12,
+                paddingHorizontal: 8,
+                gap: 4,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <Copy size={16} color={colors.text.onColor} weight='regular' />
+              <Text style={{ color: colors.text.onColor }}>WOW500</Text>
+            </View>
+          </View>
+        </View>
+        <ScrollView
+          snapToAlignment='center'
+          showsHorizontalScrollIndicator={false}
+          horizontal
+          style={{
+            padding: 20,
+            display: "flex",
+            flexDirection: "row",
+            gap: 12,
+          }}
+        >
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+              backgroundColor: colors.background.contrast,
+              color: colors.text.onColor,
+            }}
+          >
+            ALL ITEMS
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            PRADA
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            GUCCI
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            Adidas
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            Victoria Secret
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            MAISON
+          </Text>
+          <Text
+            style={{
+              paddingHorizontal: 12,
+              paddingVertical: 4,
+              borderRadius: 12,
+            }}
+          >
+            CHANNEL
+          </Text>
+        </ScrollView>
+      </View>
+
+      {/* Pager section for featured content with pagination dots */}
+      <View
+        style={{
+          height: 150,
+          marginHorizontal: 20,
+          marginVertical: 10,
+          borderRadius: 12,
+          backgroundColor: colors.accent.interactive,
+          overflow: "hidden",
+        }}
+      >
+        <PagerView
+          style={{ flex: 1, height: "100%" }}
+          initialPage={0}
+          onPageSelected={(e) => setActivePage(e.nativeEvent.position)}
+        >
+          <Image
+            source={require("@/assets/images/banner/electric.jpg")}
+            style={{
+              width: "100%",
+              height: "100%",
+              resizeMode: "contain",
+            }}
+            key='1'
+          />
+          <Image
+            source={require("@/assets/images/banner/fashion.jpg")}
+            style={{
+              width: "100%",
+              height: "100%",
+              resizeMode: "contain",
+            }}
+            key='2'
+          />
+          <Image
+            source={require("@/assets/images/banner/prada.jpg")}
+            style={{
+              width: "100%",
+              height: "100%",
+              resizeMode: "contain",
+            }}
+            key='3'
+          />
+        </PagerView>
+        {/* Pagination dots */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            position: "absolute",
+            bottom: 10,
+            width: "100%",
+          }}
+        >
+          {[0, 1, 2].map((index) => (
+            <View
+              key={index}
+              style={{
+                width: activePage === index ? 12 : 8,
+                height: activePage === index ? 12 : 8,
+                borderRadius: 6,
+                backgroundColor:
+                  activePage === index
+                    ? colors.brand.default
+                    : colors.text.secondary,
+                marginHorizontal: 4,
+              }}
+            />
+          ))}
         </View>
       </View>
     </View>
   );
-  // const renderStoriesSection = () => (
-  //   <View style={{ backgroundColor: colors.background.primary }}>
-  //     <ScrollView
-  //       horizontal
-  //       showsHorizontalScrollIndicator={false}
-  //       contentContainerStyle={{
-  //         flex: 1,
-  //         borderBottomColor: colors.background.border,
-  //         borderBottomWidth: 1,
-  //       }}
-  //     >
-  //       <View className='flex-row gap-3 w-full pl-5'>
-  //         {stories.map((item, index) => (
-  //           <TouchableOpacity
-  //             key={item.userId}
-  //             onPress={() => {
-  //               router.push({
-  //                 pathname: "/StoriesViewer",
-  //                 params: {
-  //                   userId: item.userId,
-  //                   storyImageUrls: JSON.stringify(item.storyImageUrls),
-  //                   userImageUrl: item.userImageUrl || "",
-  //                 },
-  //               });
-  //             }}
-  //             className='relative flex-row items-center gap-4 mb-4'
-  //           >
-  //             <View className='relative'>
-  //               {item.userImageUrl ? (
-  //                 <LinearGradient
-  //                   colors={[colors.brand.default, colors.accent.default]} // slate-300 to slate-700
-  //                   start={{ x: 0, y: 0 }}
-  //                   end={{ x: 0, y: 1 }}
-  //                   style={{
-  //                     width: 68,
-  //                     height: 68,
-  //                     borderRadius: 34,
-  //                     alignItems: "center",
-  //                     justifyContent: "center",
-  //                   }}
-  //                 >
-  //                   <Image
-  //                     source={{ uri: item.userImageUrl }}
-  //                     style={{
-  //                       width: 64,
-  //                       height: 64,
-  //                       borderRadius: 32,
-  //                       borderWidth: 2,
-  //                       borderColor:
-  //                         theme === "dark"
-  //                           ? colors.background.secondary
-  //                           : colors.background.primary,
-  //                     }}
-  //                   />
-  //                 </LinearGradient>
-  //               ) : (
-  //                 <Text className='absolute top-10 left-10 text-xs'>
-  //                   No User Image
-  //                 </Text>
-  //               )}
-  //             </View>
-  //           </TouchableOpacity>
-  //         ))}
-  //       </View>
-  //     </ScrollView>
-  //   </View>
-  // );
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        backgroundColor: colors.background.primary,
-      }}
-    >
-      {renderHeader()}
+    // Main container with SafeAreaView
+    <View style={{ flex: 1, backgroundColor: colors.background.primary }}>
+      {/* Scrollable content including header and products */}
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        onMomentumScrollEnd={() => {
+          if (hasMore && !isLoadingMore) loadMoreProducts();
+        }}
+      >
+        {/* Header */}
+        {renderHeader()}
 
-      <FlatList
-        style={{ padding: 10, flex: 1 }}
-        data={allProducts}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) =>
-          item && typeof item.brand === "string" ? (
+        {/* Product feed */}
+        <View
+          style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+            paddingHorizontal: 10,
+          }}
+        >
+          {allProducts.length > 0 ? (
+            allProducts.map((item) =>
+              item && typeof item.brand === "string" ? (
+                <View
+                  key={item._id}
+                  style={{
+                    width: "50%",
+                    padding: 10,
+                    paddingVertical: 24,
+                  }}
+                >
+                  <ProductFeed item={item as any} />
+                </View>
+              ) : null
+            )
+          ) : isLoadingMore || !paginatedProducts ? (
             <View
               style={{
-                width: "50%", // Each item takes half the width for 2 columns
-                padding: 10, // Add padding for spacing between items
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                padding: 20,
               }}
             >
-              <ProductFeed item={item as any} />
-            </View>
-          ) : null
-        }
-        numColumns={2}
-        ListEmptyComponent={() =>
-          isLoadingMore || !paginatedProducts ? (
-            // <SkeletalLoader />
-            <SafeAreaView>
-              <ActivityIndicator
-                size='large'
-                color={colors.brand.default}
-                style={{
-                  flex: 1,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              />
-
-              <Text style={{ color: colors.text.primary }}>
+              <ActivityIndicator size='large' color={colors.brand.default} />
+              <Text style={{ color: colors.text.primary, marginTop: 10 }}>
                 Loading products
               </Text>
-            </SafeAreaView>
+            </View>
           ) : (
             <View
               style={{
                 flex: 1,
                 justifyContent: "center",
                 alignItems: "center",
+                width: "100%",
+                padding: 20,
               }}
             >
-              <Info color={colors.text.secondary} size={24} weight='bold' />
-
-              <Text>No products</Text>
+              <Image
+                source={require("@/assets/images/items.png")}
+                style={{ width: 120, height: 120 }}
+              />
+              <Text
+                className='text-h4'
+                style={{ color: colors.text.secondary, marginTop: 10 }}
+              >
+                No products found
+              </Text>
             </View>
-          )
-        }
-        onRefresh={loadMoreProducts}
-        refreshing={isLoadingMore}
-        onEndReached={loadMoreProducts}
-        onEndReachedThreshold={0.5}
-        // ListFooterComponent={() =>
-        //   isLoadingMore && hasMore ? <SkeletalLoader /> : null
-        // }
-      />
-    </SafeAreaView>
+          )}
+        </View>
+
+        {/* Loading indicator for more products */}
+        {isLoadingMore && hasMore && (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              padding: 20,
+            }}
+          >
+            <ActivityIndicator size='large' color={colors.brand.default} />
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 };
 

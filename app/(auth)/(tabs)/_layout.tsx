@@ -46,6 +46,16 @@ const Layout = () => {
           }}
         />
         <Tabs.Screen
+          name='favourites'
+          options={{
+            headerShown: false,
+            title: "Favourites",
+            tabBarIcon({ color, size }) {
+              return <AntDesign name='hearto' size={size} color={color} />;
+            },
+          }}
+        />
+        {/* <Tabs.Screen
           name='marketplace'
           options={{
             headerShown: false,
@@ -54,9 +64,9 @@ const Layout = () => {
               return <AntDesign name='isv' size={size} color={color} />;
             },
           }}
-        />
+        /> */}
 
-        <Tabs.Screen
+        {/* <Tabs.Screen
           name='create'
           options={{
             title: "Add new Product",
@@ -66,7 +76,7 @@ const Layout = () => {
               return <AntDesign size={size} color={color} name='skin' />;
             },
           }}
-        />
+        /> */}
 
         <Tabs.Screen
           name='cart'

@@ -43,12 +43,12 @@ const InitialLayout = () => {
   useEffect(() => {
     if (!isLoaded || !fontsLoaded) return; // Add fontsLoaded check
 
-    const inAuthGroup = segments[0] === "(auth)";
+    const inAuthGroup = segments[0] === "(admin)";
 
     if (isSignedIn && !inAuthGroup) {
       // Add setTimeout to ensure layout is mounted
       setTimeout(() => {
-        router.replace("/(auth)/(tabs)");
+        router.replace("/(admin)/(tabs)");
       }, 0);
     } else if (!isSignedIn && inAuthGroup) {
       setTimeout(() => {

@@ -1,105 +1,11 @@
-import { useRouter, useLocalSearchParams } from "expo-router";
-import {
-  Alert,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-  ScrollView,
-} from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import { useState, useContext, useEffect } from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { Text, TouchableOpacity, View, Image, ScrollView } from "react-native";
+import { useContext } from "react";
 import { ThemeContext } from "@/providers/ThemeProvider";
 
 export default function Page() {
   const router = useRouter();
   const { colors } = useContext(ThemeContext);
-  const { source } = useLocalSearchParams<{ source?: string }>();
-  const [image, setImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const screenHeight = Dimensions.get("window").height;
-
-  // const handleImageUpload = async (fromGallery = false) => {
-  //   const pickImage =
-  //     async (): Promise<ImagePicker.ImagePickerResult | null> => {
-  //       const permissionResult =
-  //         await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //       if (!permissionResult.granted) {
-  //         Alert.alert(
-  //           "Permission Denied",
-  //           "Gallery access is required to pick photos."
-  //         );
-  //         return null;
-  //       }
-  //       return await ImagePicker.launchImageLibraryAsync({
-  //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //         allowsMultipleSelection: false,
-  //         quality: 1,
-  //       });
-  //     };
-
-  //   const captureImage =
-  //     async (): Promise<ImagePicker.ImagePickerResult | null> => {
-  //       const permissionResult =
-  //         await ImagePicker.requestCameraPermissionsAsync();
-  //       if (!permissionResult.granted) {
-  //         Alert.alert(
-  //           "Permission Denied",
-  //           "Camera access is required to take photos. Would you like to pick from the gallery instead?",
-  //           [
-  //             { text: "Cancel", style: "cancel" },
-  //             {
-  //               text: "Pick from Gallery",
-  //               onPress: () => handleImageUpload(true),
-  //             },
-  //           ]
-  //         );
-  //         return null;
-  //       }
-  //       return await ImagePicker.launchCameraAsync({
-  //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
-  //         allowsEditing: true,
-  //         aspect: [4, 3],
-  //         quality: 1,
-  //       });
-  //     };
-
-  //   setLoading(true);
-  //   try {
-  //     const result = fromGallery ? await pickImage() : await captureImage();
-  //     if (!result || result.canceled || !result.assets) return;
-
-  //     const imageUri = result.assets[0].uri;
-  //     setImage(imageUri);
-
-  //     router.push({
-  //       pathname: "/addProduct",
-  //       params: { imageUri },
-  //     });
-  //   } catch (error) {
-  //     console.error("Error uploading image:", error);
-  //     Alert.alert("Error", "Failed to upload image. Please try again.");
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   if (source === "camera") {
-  //     handleImageUpload(false);
-  //   } else if (source === "gallery") {
-  //     handleImageUpload(true);
-  //   }
-  // }, [source]);
-
-  // const removeImage = () => {
-  //   setImage(null);
-  // };
 
   return (
     <ScrollView style={{ flex: 1, backgroundColor: colors.background.primary }}>
@@ -243,40 +149,13 @@ export default function Page() {
             alignItems: "center",
             marginBottom: 20,
           }}
-          onPress={() => router.push("/(auth)/(modal)/AddProduct")}
+          onPress={() => router.push("../(admin)/(modal)/AddProduct")}
         >
           <Text style={{ color: "white", fontWeight: "bold" }}>
             Sell new product
           </Text>
         </TouchableOpacity>
       </View>
-      {/* <View style={{ padding: 20 }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.brand.default,
-            padding: 15,
-            borderRadius: 10,
-            alignItems: "center",
-            marginBottom: 20,
-          }}
-          onPress={() => handleImageUpload(false)}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Take Photo</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.brand.default,
-            padding: 15,
-            borderRadius: 10,
-            alignItems: "center",
-          }}
-          onPress={() => handleImageUpload(true)}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>
-            Pick from Gallery
-          </Text>
-        </TouchableOpacity>
-      </View> */}
     </ScrollView>
   );
 }

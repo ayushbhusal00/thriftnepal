@@ -1,4 +1,4 @@
-import { View, Text, FlatList, Image } from "react-native";
+import { View, Text, FlatList, Image, Dimensions } from "react-native";
 import React, { useContext } from "react";
 import { useFavourites } from "@/utils/Store";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -51,6 +51,7 @@ const Page = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 padding: 16,
+                height: Dimensions.get("window").height * 0.7,
               }}
             >
               <Image

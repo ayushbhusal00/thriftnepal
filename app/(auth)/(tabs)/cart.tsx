@@ -196,15 +196,6 @@ const Page = () => {
                 </View>
               );
             }}
-            // ItemSeparatorComponent={() => (
-            //   <View
-            //     style={{
-            //       height: 1,
-            //       marginHorizontal: 16,
-            //       borderColor: colors.background.border,
-            //     }}
-            //   />
-            // )}
             keyExtractor={(item) => item._id}
             contentContainerStyle={{ paddingBottom: 100, width: "100%" }}
           />

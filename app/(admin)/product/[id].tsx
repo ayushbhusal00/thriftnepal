@@ -14,21 +14,10 @@ import { router, useLocalSearchParams } from "expo-router";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import {
-  CalendarBlank,
-  Check,
-  Cross,
-  Heart,
-  Hourglass,
-  HouseSimple,
-  PencilSimpleLine,
-  Ruler,
-  TrashSimple,
-  X,
-} from "phosphor-react-native";
+import { CalendarBlank, HouseSimple, Ruler, X } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
-
 import { useCart } from "@/utils/Store";
+import Breadcrumb from "@/app/components/Breadcrumb";
 
 const Page = () => {
   const { colors } = useContext(ThemeContext);
@@ -76,50 +65,18 @@ const Page = () => {
           marginBottom: 16,
           flex: 1,
           display: "flex",
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          alignItems: "center",
+          flexDirection: "column",
           gap: 16,
           marginTop: Platform.OS === "ios" ? 60 : StatusBar.currentHeight,
         }}
       >
-        <TouchableOpacity onPress={() => router.dismissTo("/")}>
-          <HouseSimple color={colors.brand.default} weight='fill' />
-        </TouchableOpacity>
-        <Text
-          style={{
-            color: colors.text.secondary,
-          }}
-          className={`text-subhead-1`}
-        >
-          /
-        </Text>
-        <TouchableOpacity onPress={() => router.navigate("/")}>
-          <Text
-            style={{
-              color: colors.text.secondary,
-            }}
-            className={`text-subhead-1`}
-          >
-            Product
-          </Text>
-        </TouchableOpacity>
-        <Text
-          style={{
-            color: colors.text.secondary,
-          }}
-          className={`text-subhead-1`}
-        >
-          /
-        </Text>
-        <Text
-          style={{
-            color: colors.text.secondary,
-          }}
-          className={`text-subhead-1`}
-        >
-          {product?.title}
-        </Text>
+        <Breadcrumb
+          items={[
+            { label: "Home", path: "/(admin)/(tabs)" },
+            { label: "Products", path: "/(admin)/(tabs)/listings" },
+            { label: product?.title || "Product Details" },
+          ]}
+        />
       </View>
       <View>
         <Image

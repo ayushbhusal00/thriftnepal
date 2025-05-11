@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
+import { View, Text, TouchableOpacity, Dimensions, Image } from "react-native";
 import React, { useContext, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -30,6 +30,17 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { userProfile } = useUserProfile();
   const { signOut } = useAuth();
+  const [showSwitchAnimation, setShowSwitchAnimation] = useState(false);
+
+  const handleSwitchToSeller = async () => {
+    setShowSwitchAnimation(true);
+    setTimeout(async () => {
+      setShowSwitchAnimation(false);
+      await AsyncStorage.setItem("userRole", "seller");
+      console.log("User Switched to Seller");
+      router.replace("/(admin)/(tabs)");
+    }, 4800);
+  };
 
   return (
     <View
@@ -212,11 +223,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
       </View>
       {userProfile?.role === "seller" && (
         <TouchableOpacity
-          onPress={async () => {
-            await AsyncStorage.setItem("userRole", "seller");
-            console.log("User Switched to Seller");
-            router.replace("/(admin)/(tabs)");
-          }}
+          onPress={handleSwitchToSeller}
           style={{
             width: 200,
             position: "absolute",
@@ -251,6 +258,27 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             </Text>
           </View>
         </TouchableOpacity>
+      )}
+      {showSwitchAnimation && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(30, 30, 30, 0.7)",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 100,
+          }}
+        >
+          <Image
+            source={require("@/assets/images/animated.gif")}
+            style={{ width: 120, height: 120 }}
+            resizeMode='contain'
+          />
+        </View>
       )}
     </View>
   );

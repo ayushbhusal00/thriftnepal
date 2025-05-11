@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   SafeAreaView,
   ScrollView,
+  Image,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
@@ -31,16 +32,22 @@ const Profile = () => {
   const { signOut } = useAuth();
   const { switchRole } = useRole();
   const [isSwitchingRole, setIsSwitchingRole] = useState(false);
+  const [showSwitchAnimation, setShowSwitchAnimation] = useState(false);
 
   const handleRoleSwitch = async () => {
     try {
-      setIsSwitchingRole(true);
-      await switchRole("user");
+      setShowSwitchAnimation(true);
+      setTimeout(async () => {
+        setShowSwitchAnimation(false);
+        setIsSwitchingRole(true);
+        await switchRole("user");
+        setIsSwitchingRole(false);
+      }, 4800);
     } catch (error) {
+      setShowSwitchAnimation(false);
+      setIsSwitchingRole(false);
       console.error("Error switching role:", error);
       Alert.alert("Error", "Failed to switch role. Please try again.");
-    } finally {
-      setIsSwitchingRole(false);
     }
   };
 
@@ -260,6 +267,27 @@ const Profile = () => {
           </Text>
         </View>
       </ScrollView>
+      {showSwitchAnimation && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(30, 30, 30, 0.7)", // faded background
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 100,
+          }}
+        >
+          <Image
+            source={require("@/assets/images/animated.gif")}
+            style={{ width: 120, height: 120 }}
+            resizeMode='contain'
+          />
+        </View>
+      )}
       <TouchableOpacity
         onPress={handleRoleSwitch}
         disabled={isSwitchingRole}

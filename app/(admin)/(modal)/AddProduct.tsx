@@ -9,6 +9,7 @@ import {
   Pressable,
   TouchableOpacity,
   ActivityIndicator,
+  SafeAreaView,
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { SelectList } from "react-native-dropdown-select-list";
@@ -320,7 +321,7 @@ const Page = () => {
       await addProduct(productPayload);
 
       Alert.alert("Success", "Product added successfully!");
-      router.dismissTo({ pathname: "/create" });
+      router.dismissTo({ pathname: "/" });
     } catch (error) {
       console.error("Error adding product:", error);
       Alert.alert("Error", "Failed to add product. Please try again.");
@@ -330,514 +331,518 @@ const Page = () => {
   };
 
   return (
-    <ScrollView
-      className='flex-1'
+    <SafeAreaView
       style={{ flex: 1, backgroundColor: colors.background.primary }}
     >
-      <View className='relative'>
-        <Pressable
-          onPress={handleBack}
-          style={{
-            position: "absolute",
-            top: 16,
-            left: 16,
-            zIndex: 1,
-            backgroundColor: colors.background.secondary,
-            borderRadius: 50,
-            padding: 10,
-            borderColor: colors.background.border,
-            borderWidth: 0.25,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3.84,
-            elevation: 5,
-          }}
-        >
-          <ArrowLeft color={colors.text.primary} />
-        </Pressable>
-
-        <View style={{ padding: 20 }}>
-          <Text
-            className='text-2xl font-bold text-center mb-10'
-            style={{ color: colors.text.primary }}
-          >
-            Start Selling
-          </Text>
-
-          <View
+      <ScrollView
+        className='flex-1'
+        style={{ flex: 1, backgroundColor: colors.background.primary }}
+      >
+        <View className='relative'>
+          <Pressable
+            onPress={handleBack}
             style={{
+              position: "absolute",
+              top: 16,
+              left: 16,
+              zIndex: 1,
               backgroundColor: colors.background.secondary,
-              borderRadius: 10,
-              padding: 20,
-              alignItems: "center",
-              marginBottom: 20,
+              borderRadius: 50,
+              padding: 10,
+              borderColor: colors.background.border,
+              borderWidth: 0.25,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
             }}
           >
+            <ArrowLeft color={colors.text.primary} />
+          </Pressable>
+
+          <View style={{ padding: 20 }}>
             <Text
-              style={{ color: colors.text.primary, marginBottom: 2 }}
-              className='text-sm'
+              className='text-2xl font-bold text-center mb-10'
+              style={{ color: colors.text.primary }}
             >
-              UPLOAD IMAGE
-            </Text>
-            <Text
-              className='text-xs mb-4'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                opacity: 0.6,
-              }}
-            >
-              Required
+              Start Selling
             </Text>
 
-            {formData.imageUri ? (
-              <View
+            <View
+              style={{
+                backgroundColor: colors.background.secondary,
+                borderRadius: 10,
+                padding: 20,
+                alignItems: "center",
+                marginBottom: 20,
+              }}
+            >
+              <Text
+                style={{ color: colors.text.primary, marginBottom: 2 }}
+                className='text-sm'
+              >
+                UPLOAD IMAGE
+              </Text>
+              <Text
+                className='text-xs mb-4'
                 style={{
-                  alignItems: "center",
-                  width: "100%",
-                  position: "relative",
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  opacity: 0.6,
                 }}
               >
-                <Image
-                  source={{ uri: formData.imageUri }}
-                  style={{
-                    width: "100%",
-                    height: 200,
-                    borderRadius: 10,
-                    marginBottom: 10,
-                  }}
-                />
-                <TouchableOpacity
-                  onPress={handleFillWithAI}
-                  disabled={aiLoading}
-                  style={{
-                    backgroundColor: aiLoading
-                      ? colors.brand.interactive
-                      : colors.brand.default,
-                    padding: 10,
-                    borderRadius: 5,
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                    zIndex: 1,
-                  }}
-                >
-                  <Text style={{ color: "white" }}>
-                    {aiLoading ? "Analyzing..." : "Fill with AI"}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() =>
-                    setFormData((prev) => ({ ...prev, imageUri: "" }))
-                  }
-                  accessibilityLabel='Remove uploaded image'
-                >
-                  <Text
-                    style={{ color: colors.brand.default, marginBottom: 10 }}
-                  >
-                    Remove Image
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                onPress={() => handleImageUpload(true)}
-                style={{
-                  borderWidth: 2,
-                  borderStyle: "dashed",
-                  borderColor: colors.background.border,
-                  borderRadius: 10,
-                  width: "100%",
-                  height: 150,
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginBottom: 10,
-                }}
-                accessibilityLabel='Upload image'
-              >
+                Required
+              </Text>
+
+              {formData.imageUri ? (
                 <View
                   style={{
-                    backgroundColor: colors.background.primary,
-                    borderRadius: 50,
-                    padding: 10,
+                    alignItems: "center",
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  <Image
+                    source={{ uri: formData.imageUri }}
+                    style={{
+                      width: "100%",
+                      height: 200,
+                      borderRadius: 10,
+                      marginBottom: 10,
+                    }}
+                  />
+                  <TouchableOpacity
+                    onPress={handleFillWithAI}
+                    disabled={aiLoading}
+                    style={{
+                      backgroundColor: aiLoading
+                        ? colors.brand.interactive
+                        : colors.brand.default,
+                      padding: 10,
+                      borderRadius: 5,
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      zIndex: 1,
+                    }}
+                  >
+                    <Text style={{ color: "white" }}>
+                      {aiLoading ? "Analyzing..." : "Fill with AI"}
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      setFormData((prev) => ({ ...prev, imageUri: "" }))
+                    }
+                    accessibilityLabel='Remove uploaded image'
+                  >
+                    <Text
+                      style={{ color: colors.brand.default, marginBottom: 10 }}
+                    >
+                      Remove Image
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => handleImageUpload(true)}
+                  style={{
+                    borderWidth: 2,
+                    borderStyle: "dashed",
+                    borderColor: colors.background.border,
+                    borderRadius: 10,
+                    width: "100%",
+                    height: 150,
+                    justifyContent: "center",
+                    alignItems: "center",
                     marginBottom: 10,
                   }}
+                  accessibilityLabel='Upload image'
                 >
-                  <Images color={colors.text.secondary} size={24} />
-                </View>
-                <Text
-                  style={{
-                    color: colors.brand.default,
-                    fontSize: 14,
-                    marginBottom: 5,
-                  }}
-                >
-                  Drag & Drop or Browse
-                </Text>
-                <Text
-                  style={{
-                    color: colors.text.secondary,
-                    fontSize: 12,
-                    opacity: 0.7,
-                  }}
-                >
-                  Max 256MB
-                </Text>
-              </TouchableOpacity>
-            )}
+                  <View
+                    style={{
+                      backgroundColor: colors.background.primary,
+                      borderRadius: 50,
+                      padding: 10,
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Images color={colors.text.secondary} size={24} />
+                  </View>
+                  <Text
+                    style={{
+                      color: colors.brand.default,
+                      fontSize: 14,
+                      marginBottom: 5,
+                    }}
+                  >
+                    Drag & Drop or Browse
+                  </Text>
+                  <Text
+                    style={{
+                      color: colors.text.secondary,
+                      fontSize: 12,
+                      opacity: 0.7,
+                    }}
+                  >
+                    Max 256MB
+                  </Text>
+                </TouchableOpacity>
+              )}
 
-            {loading && (
-              <ActivityIndicator
-                size='large'
-                color={colors.brand.default}
-                style={{ marginVertical: 10 }}
-              />
-            )}
+              {loading && (
+                <ActivityIndicator
+                  size='large'
+                  color={colors.brand.default}
+                  style={{ marginVertical: 10 }}
+                />
+              )}
 
-            <Text
-              style={{
-                color: colors.text.secondary,
-                fontSize: 14,
-                marginVertical: 10,
-              }}
-            >
-              Or
-            </Text>
-            <View style={{ flexDirection: "row", gap: 10 }}>
-              <TouchableOpacity
-                onPress={() => handleImageUpload(false)}
+              <Text
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  backgroundColor: colors.background.primary,
-                  padding: 10,
-                  borderRadius: 5,
-                  borderWidth: 1,
-                  borderColor: colors.background.border,
+                  color: colors.text.secondary,
+                  fontSize: 14,
+                  marginVertical: 10,
                 }}
-                accessibilityLabel='Take photo with camera'
               >
-                <Camera color={colors.text.secondary} size={20} />
-                <Text style={{ color: colors.text.secondary, marginLeft: 5 }}>
-                  Take Photo
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => handleImageUpload(true)}
-                style={{
-                  backgroundColor: colors.brand.default,
-                  padding: 10,
-                  borderRadius: 5,
-                }}
-                accessibilityLabel='Pick from gallery'
-              >
-                <Text style={{ color: "white" }}>Pick from Gallery</Text>
-              </TouchableOpacity>
+                Or
+              </Text>
+              <View style={{ flexDirection: "row", gap: 10 }}>
+                <TouchableOpacity
+                  onPress={() => handleImageUpload(false)}
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: colors.background.primary,
+                    padding: 10,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    borderColor: colors.background.border,
+                  }}
+                  accessibilityLabel='Take photo with camera'
+                >
+                  <Camera color={colors.text.secondary} size={20} />
+                  <Text style={{ color: colors.text.secondary, marginLeft: 5 }}>
+                    Take Photo
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => handleImageUpload(true)}
+                  style={{
+                    backgroundColor: colors.brand.default,
+                    padding: 10,
+                    borderRadius: 5,
+                  }}
+                  accessibilityLabel='Pick from gallery'
+                >
+                  <Text style={{ color: "white" }}>Pick from Gallery</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
         </View>
-      </View>
 
-      <View className='p-6'>
-        <View className='space-y-4 flex-col gap-6'>
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Brand
-            </Text>
-            <TextInput
-              value={formData.brand}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, brand: text }))
-              }
-              className='rounded-lg p-3'
+        <View className='p-6'>
+          <View className='space-y-4 flex-col gap-6'>
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Brand
+              </Text>
+              <TextInput
+                value={formData.brand}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, brand: text }))
+                }
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter brand name'
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Product Name
+              </Text>
+              <TextInput
+                value={formData.identifiedProduct}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, identifiedProduct: text }))
+                }
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter product name'
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Size
+              </Text>
+              <SelectList
+                setSelected={(val: string) =>
+                  setFormData((prev) => ({ ...prev, size: val }))
+                }
+                data={sizes}
+                defaultOption={
+                  sizes.includes(formData.size)
+                    ? { key: formData.size, value: formData.size }
+                    : undefined
+                }
+                save='value'
+                search={false}
+                boxStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  padding: 12,
+                  marginBottom: 4,
+                  borderWidth: 1,
+                }}
+                inputStyles={{ color: colors.text.primary }}
+                dropdownStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  borderWidth: 1,
+                }}
+                dropdownItemStyles={{
+                  backgroundColor: colors.background.secondary,
+                }}
+                dropdownTextStyles={{ color: colors.text.primary }}
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Category
+              </Text>
+              <SelectList
+                setSelected={(val: string) =>
+                  setFormData((prev) => ({ ...prev, productCategory: val }))
+                }
+                data={categories}
+                defaultOption={
+                  categories.includes(formData.productCategory)
+                    ? {
+                        key: formData.productCategory,
+                        value: formData.productCategory,
+                      }
+                    : undefined
+                }
+                save='value'
+                search={false}
+                boxStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  padding: 12,
+                  marginBottom: 4,
+                  borderWidth: 1,
+                }}
+                inputStyles={{ color: colors.text.primary }}
+                dropdownStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  borderWidth: 1,
+                }}
+                dropdownItemStyles={{
+                  backgroundColor: colors.background.secondary,
+                }}
+                dropdownTextStyles={{ color: colors.text.primary }}
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Condition
+              </Text>
+              <SelectList
+                setSelected={(val: string) =>
+                  setFormData((prev) => ({ ...prev, condition: val }))
+                }
+                data={conditions}
+                defaultOption={
+                  conditions.includes(formData.condition)
+                    ? { key: formData.condition, value: formData.condition }
+                    : undefined
+                }
+                save='value'
+                search={false}
+                boxStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  padding: 12,
+                  marginBottom: 4,
+                  borderWidth: 1,
+                }}
+                inputStyles={{ color: colors.text.primary }}
+                dropdownStyles={{
+                  borderRadius: 8,
+                  borderColor: colors.background.border,
+                  backgroundColor: colors.background.secondary,
+                  borderWidth: 1,
+                }}
+                dropdownItemStyles={{
+                  backgroundColor: colors.background.secondary,
+                }}
+                dropdownTextStyles={{ color: colors.text.primary }}
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Estimated Cost
+              </Text>
+              <TextInput
+                value={formData.estimatedCost}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, estimatedCost: text }))
+                }
+                keyboardType='numeric'
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter estimated cost'
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Materials Used
+              </Text>
+              <TextInput
+                value={formData.fabricsUsed}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, fabricsUsed: text }))
+                }
+                multiline
+                numberOfLines={3}
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter materials used'
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Feature Highlights
+              </Text>
+              <TextInput
+                value={formData.featureHighlights}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, featureHighlights: text }))
+                }
+                multiline
+                numberOfLines={3}
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter feature highlights'
+              />
+            </View>
+
+            <View>
+              <Text
+                className='text-sm mb-1'
+                style={{ color: colors.text.primary, marginBottom: 4 }}
+              >
+                Description
+              </Text>
+              <TextInput
+                value={formData.verbalDescription}
+                onChangeText={(text) =>
+                  setFormData((prev) => ({ ...prev, verbalDescription: text }))
+                }
+                multiline
+                numberOfLines={4}
+                className='rounded-lg p-3'
+                style={{
+                  color: colors.text.primary,
+                  marginBottom: 4,
+                  backgroundColor: colors.background.secondary,
+                  borderColor: colors.background.border,
+                  borderWidth: 1,
+                }}
+                placeholder='Enter product description'
+              />
+            </View>
+
+            <Pressable
+              onPress={handleSubmit}
+              disabled={isSubmitting}
               style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
+                backgroundColor: isSubmitting
+                  ? colors.brand.interactive
+                  : colors.brand.default,
               }}
-              placeholder='Enter brand name'
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
+              className='rounded-lg p-4 mt-6'
             >
-              Product Name
-            </Text>
-            <TextInput
-              value={formData.identifiedProduct}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, identifiedProduct: text }))
-              }
-              className='rounded-lg p-3'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
-              }}
-              placeholder='Enter product name'
-            />
+              <Text
+                style={{ color: colors.text.primary }}
+                className='text-center font-semibold'
+              >
+                {isSubmitting ? "Adding..." : "Add Product"}
+              </Text>
+            </Pressable>
           </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Size
-            </Text>
-            <SelectList
-              setSelected={(val: string) =>
-                setFormData((prev) => ({ ...prev, size: val }))
-              }
-              data={sizes}
-              defaultOption={
-                sizes.includes(formData.size)
-                  ? { key: formData.size, value: formData.size }
-                  : undefined
-              }
-              save='value'
-              search={false}
-              boxStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                padding: 12,
-                marginBottom: 4,
-                borderWidth: 1,
-              }}
-              inputStyles={{ color: colors.text.primary }}
-              dropdownStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                borderWidth: 1,
-              }}
-              dropdownItemStyles={{
-                backgroundColor: colors.background.secondary,
-              }}
-              dropdownTextStyles={{ color: colors.text.primary }}
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Category
-            </Text>
-            <SelectList
-              setSelected={(val: string) =>
-                setFormData((prev) => ({ ...prev, productCategory: val }))
-              }
-              data={categories}
-              defaultOption={
-                categories.includes(formData.productCategory)
-                  ? {
-                      key: formData.productCategory,
-                      value: formData.productCategory,
-                    }
-                  : undefined
-              }
-              save='value'
-              search={false}
-              boxStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                padding: 12,
-                marginBottom: 4,
-                borderWidth: 1,
-              }}
-              inputStyles={{ color: colors.text.primary }}
-              dropdownStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                borderWidth: 1,
-              }}
-              dropdownItemStyles={{
-                backgroundColor: colors.background.secondary,
-              }}
-              dropdownTextStyles={{ color: colors.text.primary }}
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Condition
-            </Text>
-            <SelectList
-              setSelected={(val: string) =>
-                setFormData((prev) => ({ ...prev, condition: val }))
-              }
-              data={conditions}
-              defaultOption={
-                conditions.includes(formData.condition)
-                  ? { key: formData.condition, value: formData.condition }
-                  : undefined
-              }
-              save='value'
-              search={false}
-              boxStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                padding: 12,
-                marginBottom: 4,
-                borderWidth: 1,
-              }}
-              inputStyles={{ color: colors.text.primary }}
-              dropdownStyles={{
-                borderRadius: 8,
-                borderColor: colors.background.border,
-                backgroundColor: colors.background.secondary,
-                borderWidth: 1,
-              }}
-              dropdownItemStyles={{
-                backgroundColor: colors.background.secondary,
-              }}
-              dropdownTextStyles={{ color: colors.text.primary }}
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Estimated Cost
-            </Text>
-            <TextInput
-              value={formData.estimatedCost}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, estimatedCost: text }))
-              }
-              keyboardType='numeric'
-              className='rounded-lg p-3'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
-              }}
-              placeholder='Enter estimated cost'
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Materials Used
-            </Text>
-            <TextInput
-              value={formData.fabricsUsed}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, fabricsUsed: text }))
-              }
-              multiline
-              numberOfLines={3}
-              className='rounded-lg p-3'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
-              }}
-              placeholder='Enter materials used'
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Feature Highlights
-            </Text>
-            <TextInput
-              value={formData.featureHighlights}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, featureHighlights: text }))
-              }
-              multiline
-              numberOfLines={3}
-              className='rounded-lg p-3'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
-              }}
-              placeholder='Enter feature highlights'
-            />
-          </View>
-
-          <View>
-            <Text
-              className='text-sm mb-1'
-              style={{ color: colors.text.primary, marginBottom: 4 }}
-            >
-              Description
-            </Text>
-            <TextInput
-              value={formData.verbalDescription}
-              onChangeText={(text) =>
-                setFormData((prev) => ({ ...prev, verbalDescription: text }))
-              }
-              multiline
-              numberOfLines={4}
-              className='rounded-lg p-3'
-              style={{
-                color: colors.text.primary,
-                marginBottom: 4,
-                backgroundColor: colors.background.secondary,
-                borderColor: colors.background.border,
-                borderWidth: 1,
-              }}
-              placeholder='Enter product description'
-            />
-          </View>
-
-          <Pressable
-            onPress={handleSubmit}
-            disabled={isSubmitting}
-            style={{
-              backgroundColor: isSubmitting
-                ? colors.brand.interactive
-                : colors.brand.default,
-            }}
-            className='rounded-lg p-4 mt-6'
-          >
-            <Text
-              style={{ color: colors.text.primary }}
-              className='text-center font-semibold'
-            >
-              {isSubmitting ? "Adding..." : "Add Product"}
-            </Text>
-          </Pressable>
         </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

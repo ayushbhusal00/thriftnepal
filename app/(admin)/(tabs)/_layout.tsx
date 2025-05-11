@@ -33,10 +33,10 @@ const Layout = () => {
           }}
         />
         <Tabs.Screen
-          name='create'
+          name='listings'
           options={{
             headerShown: false,
-            title: "Create Items",
+            title: "Your Listings",
             tabBarIcon({ color, size }) {
               return <AntDesign name='isv' size={size} color={color} />;
             },

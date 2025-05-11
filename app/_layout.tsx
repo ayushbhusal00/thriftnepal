@@ -6,9 +6,10 @@ import { Slot, SplashScreen, useRouter, useSegments } from "expo-router";
 import "@/styles/global.css";
 import { useFonts } from "expo-font";
 import { useCallback, useEffect, useState } from "react";
-import { View } from "react-native";
+import { View, Text } from "react-native";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import { useUserProfile } from "@/hooks/useUserProfile";
+import { RoleProvider } from "@/providers/RoleProvider";
 
 const clerkPublishableKey: string =
   process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
@@ -148,7 +149,9 @@ export default function RootLayout() {
       <ClerkLoaded>
         <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
           <ThemeProvider>
-            <InitialLayout />
+            <RoleProvider>
+              <InitialLayout />
+            </RoleProvider>
           </ThemeProvider>
         </ConvexProviderWithClerk>
       </ClerkLoaded>

@@ -43,10 +43,10 @@ const Layout = () => {
         }}
       />
       <Stack.Screen name='(screens)' options={{ headerShown: false }} />
-      <Stack.Screen
+      {/* <Stack.Screen
         name='(modal)'
         options={{ headerShown: false, presentation: "modal" }}
-      />
+      /> */}
       <Stack.Screen
         name='(payment)/success'
         options={{

@@ -1,161 +1,135 @@
-import { useRouter } from "expo-router";
-import { Text, TouchableOpacity, View, Image, ScrollView } from "react-native";
-import { useContext } from "react";
+import {
+  View,
+  Text,
+  FlatList,
+  Dimensions,
+  Image,
+  TouchableOpacity,
+  Pressable,
+} from "react-native";
+import React, { useContext } from "react";
+import { useUserProfile } from "@/hooks/useUserProfile";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import ProductStatus from "@/app/components/ProductStatus";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { ThemeContext } from "@/providers/ThemeProvider";
+import { router } from "expo-router";
+import { AntDesign } from "@expo/vector-icons";
 
-export default function Page() {
-  const router = useRouter();
-  const { colors } = useContext(ThemeContext);
+const Page = () => {
+  const { theme, colors } = useContext(ThemeContext);
+  const { userProfile } = useUserProfile();
+
+  const screenHeight = Dimensions.get("window").height;
+
+  const myProducts = useQuery(api.products.getMyProducts, {
+    userId: userProfile?._id as Id<"users">,
+  });
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: colors.background.primary }}>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-          gap: 12,
-          padding: 20,
+    <SafeAreaView
+      style={{
+        backgroundColor:
+          theme === "light"
+            ? colors.background.secondary
+            : colors.background.primary,
+        flex: 1,
+        gap: 8,
+      }}
+    >
+      <View className='px-5 flex-row items-center justify-between mb-4'>
+        <Text
+          className={`text-2xl font-dmsans`}
+          style={{ color: colors.text.primary }}
+        >
+          Your Listings
+        </Text>
+        <View className='flex-row gap-4'>
+          <AntDesign
+            name='menuunfold'
+            size={24}
+            color={colors.text.secondary}
+          />
+          <AntDesign
+            name='appstore-o'
+            size={24}
+            color={colors.text.secondary}
+          />
+          <Pressable
+            onPress={() => {
+              router.push("/create");
+            }}
+          >
+            <AntDesign name='plus' size={24} color={colors.text.secondary} />
+          </Pressable>
+        </View>
+      </View>
+      <FlatList
+        data={myProducts}
+        renderItem={({ item }) => {
+          return item && typeof item.brand === "string" ? (
+            <View className={`rounded-lg`}>
+              <ProductStatus item={item as any} />
+            </View>
+          ) : null;
         }}
-      >
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 12,
-            width: "100%",
-            alignItems: "center",
-            paddingVertical: 20,
-          }}
-        >
-          <Image
-            source={require("@/assets/images/list.png")}
-            style={{ width: 160, height: "100%", resizeMode: "contain" }}
-          />
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              gap: 4,
-              flex: 1,
-            }}
-          >
-            <Text
+        ListEmptyComponent={() => {
+          return (
+            <View
               style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: colors.text.primary,
-                textAlign: "left",
-                marginTop: 20,
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                width: "100%",
+                padding: 20,
+                height: screenHeight * 0.7,
               }}
             >
-              01. List
-            </Text>
-            <Text style={{ color: colors.text.secondary }}>
-              Include well-lit photographs, be descriptive, and pick a good
-              price.
-            </Text>
-          </View>
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 12,
-            width: "100%",
-            alignItems: "center",
-            paddingVertical: 20,
-          }}
-        >
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              gap: 4,
-              flex: 1,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: colors.text.primary,
-                textAlign: "left",
-                marginTop: 20,
-              }}
-            >
-              01. List
-            </Text>
-            <Text style={{ color: colors.text.secondary }}>
-              Include well-lit photographs, be descriptive, and pick a good
-              price.
-            </Text>
-          </View>
-          <Image
-            source={require("@/assets/images/shipping.png")}
-            style={{ width: 160, height: "100%", resizeMode: "contain" }}
-          />
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 12,
-            width: "100%",
-            alignItems: "center",
-            paddingVertical: 20,
-          }}
-        >
-          <Image
-            source={require("@/assets/images/get-paid.png")}
-            style={{ width: 160, height: "100%", resizeMode: "contain" }}
-          />
-          <View
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "flex-start",
-              gap: 4,
-              flex: 1,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 20,
-                fontWeight: "bold",
-                color: colors.text.primary,
-                textAlign: "left",
-                marginTop: 20,
-              }}
-            >
-              01. List
-            </Text>
-            <Text style={{ color: colors.text.secondary }}>
-              Include well-lit photographs, be descriptive, and pick a good
-              price.
-            </Text>
-          </View>
-        </View>
-      </View>
-      <View style={{ padding: 20 }}>
-        <TouchableOpacity
-          style={{
-            backgroundColor: colors.brand.default,
-            padding: 15,
-            borderRadius: 10,
-            alignItems: "center",
-            marginBottom: 20,
-          }}
-          onPress={() => router.push("../(admin)/(modal)/AddProduct")}
-        >
-          <Text style={{ color: "white", fontWeight: "bold" }}>
-            Sell new product
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+              <Image
+                source={require("@/assets/images/ghost.png")}
+                style={{ width: 120, height: 120 }}
+              />
+              <Text
+                className='text-h4 font-dmsans'
+                style={{ color: colors.text.secondary, marginTop: 10 }}
+              >
+                Nothing Listed Yet
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  router.push("/create");
+                }}
+                style={{
+                  flexDirection: "row",
+                  paddingVertical: 12,
+                  paddingHorizontal: 16,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  borderRadius: 16,
+                  backgroundColor: colors.brand.default,
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 1,
+                  marginTop: 16,
+                }}
+              >
+                <Text
+                  style={{
+                    color: colors.text.onColor,
+                  }}
+                  className='text-paragraph-1 font-dmsans'
+                >
+                  Start Selling
+                </Text>
+              </TouchableOpacity>
+            </View>
+          );
+        }}
+      />
+    </SafeAreaView>
   );
-}
+};
+
+export default Page;

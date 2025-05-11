@@ -124,11 +124,11 @@ const Page = () => {
                     minHeight: 420,
                   }}
                 >
-                  <Text className='text-h2 text-center'>
+                  <Text className='text-h2 font-dmsans text-center'>
                     Make your first order
                   </Text>
                   <Text
-                    className='text-paragraph-1 text-center'
+                    className='text-paragraph-1 font-dmsans text-center'
                     style={{ color: colors.text.secondary }}
                   >
                     Perhaps you will be inspired by our discounts and
@@ -163,7 +163,7 @@ const Page = () => {
                         style={{
                           color: colors.text.primary,
                         }}
-                        className='text-paragraph-1'
+                        className='text-paragraph-1 font-dmsans'
                       >
                         To the main page
                       </Text>
@@ -189,7 +189,7 @@ const Page = () => {
                         style={{
                           color: colors.text.onColor,
                         }}
-                        className='text-paragraph-1'
+                        className='text-paragraph-1 font-dmsans'
                       >
                         Continue Shopping
                       </Text>
@@ -265,7 +265,7 @@ const Page = () => {
                     style={{
                       color: colors.text.onColor,
                     }}
-                    className='text-paragraph-1'
+                    className='text-paragraph-1 font-dmsans'
                   >
                     {cart.length} items
                   </Text>
@@ -273,7 +273,7 @@ const Page = () => {
                     style={{
                       color: colors.text.onColor,
                     }}
-                    className='text-paragraph-1'
+                    className='text-paragraph-1 font-dmsans'
                   >
                     Continue to Payment
                   </Text>
@@ -281,7 +281,7 @@ const Page = () => {
                     style={{
                       color: colors.text.onColor,
                     }}
-                    className='text-paragraph-1'
+                    className='text-paragraph-1 font-dmsans'
                   >
                     ₹ {cart.reduce((acc, item) => acc + item.price, 0)}
                   </Text>

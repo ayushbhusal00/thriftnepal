@@ -9,6 +9,7 @@ export const User = {
   first_name: v.optional(v.string()),
   last_name: v.optional(v.string()),
   username: v.union(v.string(), v.null()),
+  role: v.optional(v.string()), // New field to store the user's role
 };
 
 export const Story = {

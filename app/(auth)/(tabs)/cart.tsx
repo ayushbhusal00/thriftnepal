@@ -68,7 +68,9 @@ const Page = () => {
                     }}
                   />
                 </View>
-              ) : null;
+              ) : (
+                <View />
+              );
             }}
             ListHeaderComponent={() => {
               return (

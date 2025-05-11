@@ -19,6 +19,7 @@ import {
 } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
 import UserProfile from "@/app/components/UserProfile";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type ProfileProps = {
   userId?: Id<"users">;
@@ -27,19 +28,7 @@ type ProfileProps = {
 const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
   const { colors } = useContext(ThemeContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
-  // const { userProfile } = useUserProfile();
-  const userProfile = {
-    _creationTime: 1745075425708.771,
-    _id: "jd777hjdbxa16v8yhn33xsr52s7ebzm8",
-    clerkId: "user_2vx8aDFqJO7hHUmklYe4DenhCHg",
-    email: "ayushbhusal00@gmail.com",
-    first_name: "Ayush",
-    imageUrl:
-      "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18ydng4YUMxdDYxbmxBRGJuRlU5S0N0NWZQekkifQ",
-    last_name: "Bhusal",
-    username: "Ayush Bhusal",
-  };
-  const { top } = useSafeAreaInsets();
+  const { userProfile } = useUserProfile();
   const { signOut } = useAuth();
 
   return (
@@ -113,7 +102,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             <CaretRight size={24} color={colors.text.secondary} />
           </View>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => router.push(`/Favourites`)}>
+        <TouchableOpacity onPress={() => router.push(`/favourites`)}>
           <View className='px-6 py-4 flex-row justify-between items-center'>
             <View className='flex-row gap-4 items-center '>
               <AntDesign
@@ -187,42 +176,82 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
           </View>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity
-        onPress={toggleTheme}
+      <View
         style={{
-          width: 200,
-          position: "absolute",
-          bottom: 20,
-          left: Dimensions.get("window").width / 2 - 100,
-          paddingVertical: 12,
-          paddingHorizontal: 20,
-          justifyContent: "center",
-          alignItems: "center",
-          borderRadius: 16,
-          backgroundColor: colors.background.contrast,
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.1,
-          shadowRadius: 1,
+          borderTopColor: colors.background.border,
+          borderTopWidth: 0.5,
         }}
       >
-        <View className='flex-row gap-2 items-center '>
-          <AntDesign
-            size={24}
-            color={
-              theme === "light" ? colors.text.onColor : colors.accent.default
-            }
-            name='retweet'
-          />
-          <Text
-            className='text-lg'
-            style={{
-              color: colors.text.onColor,
-            }}
-          >
-            Switch to Seller
-          </Text>
-        </View>
-      </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => signOut()}
+          style={{
+            paddingVertical: 12,
+            marginHorizontal: 20,
+            marginVertical: 12,
+            paddingHorizontal: 20,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 16,
+            backgroundColor: colors.background.contrast,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 1,
+          }}
+        >
+          <View className='flex-row gap-2 items-center '>
+            <Text
+              className='text-lg'
+              style={{
+                color: colors.text.onColor,
+              }}
+            >
+              Log Out
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {userProfile?.role === "seller" && (
+        <TouchableOpacity
+          onPress={async () => {
+            await AsyncStorage.setItem("userRole", "seller");
+            console.log("User Switched to Seller");
+            router.replace("/(admin)/(tabs)");
+          }}
+          style={{
+            width: 200,
+            position: "absolute",
+            bottom: 20,
+            left: Dimensions.get("window").width / 2 - 100,
+            paddingVertical: 12,
+            paddingHorizontal: 20,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 16,
+            backgroundColor: colors.background.contrast,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 1,
+          }}
+        >
+          <View className='flex-row gap-2 items-center '>
+            <AntDesign
+              size={24}
+              color={
+                theme === "light" ? colors.text.onColor : colors.accent.default
+              }
+              name='retweet'
+            />
+            <Text
+              className='text-lg'
+              style={{
+                color: colors.text.onColor,
+              }}
+            >
+              Switch to Seller
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

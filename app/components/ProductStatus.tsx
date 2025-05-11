@@ -40,22 +40,6 @@ const ProductStatus = ({ item }: { item: Product }) => {
       style={{
         width: "100%",
         flex: 1,
-        marginBottom: 16,
-        borderRadius: 10,
-        borderWidth: 0.25,
-        borderColor: colors.background.border,
-        overflow: "hidden",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 1,
-        },
-        shadowOpacity: 0.4,
-        shadowRadius: 0.5,
-        backgroundColor:
-          theme === "light"
-            ? colors.background.primary
-            : colors.background.secondary,
       }}
     >
       <View
@@ -97,15 +81,29 @@ const ProductStatus = ({ item }: { item: Product }) => {
                   height={52}
                 />
               ))}
-              {item.approved && (
+              {item.approved ? (
                 <View
                   style={{
                     width: 12,
                     height: 12,
                     position: "absolute",
-                    bottom: -6,
-                    right: -6,
+                    bottom: 2,
+                    right: 2,
                     backgroundColor: "green",
+                    borderRadius: 100,
+                    borderWidth: 2,
+                    borderColor: "white",
+                  }}
+                />
+              ) : (
+                <View
+                  style={{
+                    width: 12,
+                    height: 12,
+                    position: "absolute",
+                    bottom: 2,
+                    right: 2,
+                    backgroundColor: "orange",
                     borderRadius: 100,
                     borderWidth: 2,
                     borderColor: "white",
@@ -116,32 +114,30 @@ const ProductStatus = ({ item }: { item: Product }) => {
             <View
               style={{
                 flexDirection: "column",
-                gap: 2,
+                gap: 4,
                 width: "100%",
                 flex: 1,
               }}
             >
               <Text
                 style={{
-                  fontWeight: "600",
-                  fontSize: 14,
                   color: colors.text.primary,
                 }}
                 numberOfLines={2}
+                className='text-h4 font-dmsans'
               >
                 {item.title}
               </Text>
               <Text
                 style={{
-                  fontWeight: "500",
-                  fontSize: 14,
                   color: colors.text.primary,
                 }}
+                className='text-paragraph-1 font-dmsans'
               >
                 ₹ {item.price}
               </Text>
             </View>
-            <CaretRight size={20} color={colors.text.secondary} />
+            {/* <CaretRight size={20} color={colors.text.secondary} /> */}
           </View>
         </View>
       </View>

@@ -55,28 +55,6 @@ const Layout = () => {
             },
           }}
         />
-        {/* <Tabs.Screen
-          name='marketplace'
-          options={{
-            headerShown: false,
-            title: "Marketplace",
-            tabBarIcon({ color, size }) {
-              return <AntDesign name='isv' size={size} color={color} />;
-            },
-          }}
-        /> */}
-
-        {/* <Tabs.Screen
-          name='create'
-          options={{
-            title: "Add new Product",
-            headerStyle: { backgroundColor: colors.background.secondary },
-            headerTintColor: colors.text.primary,
-            tabBarIcon({ color, size }) {
-              return <AntDesign size={size} color={color} name='skin' />;
-            },
-          }}
-        /> */}
 
         <Tabs.Screen
           name='cart'
@@ -101,6 +79,7 @@ const Layout = () => {
                         borderRadius: 10,
                         borderWidth: 1,
                         borderColor: colors.brand.border,
+                        zIndex: 1,
                       }}
                     >
                       {cartCount}

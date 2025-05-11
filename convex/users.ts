@@ -17,11 +17,13 @@ export const createUser = internalMutation({
     first_name: v.optional(v.string()),
     last_name: v.optional(v.string()),
     username: v.union(v.string(), v.null()),
+    role: v.optional(v.string()), // Optional role information
   },
   handler: async (ctx, args) => {
     const userId = await ctx.db.insert("users", {
       ...args,
       username: args.username || `${args.first_name} ${args.last_name}`,
+      role: args.role || "user", // Default to "user" if role is not provided
     });
     console.log("creating user", args);
     return userId;

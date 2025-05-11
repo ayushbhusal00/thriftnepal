@@ -4,24 +4,37 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { Slot, SplashScreen, useRouter, useSegments } from "expo-router";
 import "@/styles/global.css";
-import { useFonts } from "expo-font"; // Correct import for custom fonts
-import { useCallback, useEffect } from "react";
-import { View } from "react-native"; // Import View for layout
+import { useFonts } from "expo-font";
+import { useCallback, useEffect, useState } from "react";
+import { View } from "react-native";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { ConfettiProvider } from "typegpu-confetti/react-native";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-const clerkPublishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const clerkPublishableKey: string =
+  process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
 
 if (!clerkPublishableKey) {
   throw new Error(
-    "Missing Clerk Publishable Key, Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
+    "Missing Clerk Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env"
   );
 }
 
-const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!);
+const convexUrl = process.env.EXPO_PUBLIC_CONVEX_URL;
+
+if (!convexUrl) {
+  throw new Error(
+    "Missing Convex URL. Please set EXPO_PUBLIC_CONVEX_URL in your .env"
+  );
+}
+
+const convex = new ConvexReactClient(convexUrl);
 
 // Prevent autohide of splash screen
 SplashScreen.preventAutoHideAsync();
+
+interface UserProfile {
+  role: "user" | "seller" | null;
+}
 
 const InitialLayout = () => {
   const [fontsLoaded, fontError] = useFonts({
@@ -32,41 +45,98 @@ const InitialLayout = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const router = useRouter();
   const segments = useSegments();
+  const [hasRedirected, setHasRedirected] = useState(false); // Track initial redirect
+
+  // Only call useUserProfile when signed in
+  const { userProfile, isLoading: isProfileLoading } = isSignedIn
+    ? useUserProfile()
+    : { userProfile: null, isLoading: false };
+  const userRole = (userProfile?.role as "user" | "seller" | null) ?? null;
+
+  if (__DEV__) {
+    console.log("User Role: ", userRole);
+    console.log("Segments: ", segments);
+  }
 
   const onLayoutRootView = useCallback(async () => {
-    if (fontsLoaded || fontError) {
+    if ((fontsLoaded || fontError) && isLoaded && !isProfileLoading) {
       await SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, fontError]);
+  }, [fontsLoaded, fontError, isLoaded, isProfileLoading]);
 
   // Handle routing based on auth state
   useEffect(() => {
-    if (!isLoaded || !fontsLoaded) return; // Add fontsLoaded check
+    if (!isLoaded || !fontsLoaded || isProfileLoading || hasRedirected) return;
 
-    const inAuthGroup = segments[0] === "(admin)";
+    // Ensure segments is valid
+    if (!segments || !segments[0]) return;
 
-    if (isSignedIn && !inAuthGroup) {
-      // Add setTimeout to ensure layout is mounted
-      setTimeout(() => {
+    const inAuthGroup = segments[0] === "(auth)";
+    const inAdminGroup = segments[0] === "(admin)";
+    const inPublicGroup = segments[0] === "(public)";
+
+    if (isSignedIn) {
+      // Signed-in user logic
+      if (inAdminGroup && userRole === "user") {
+        // User is not allowed in admin routes
+        router.replace("/(auth)/(tabs)");
+        setHasRedirected(true);
+      } else if (userRole === "seller" && !inAdminGroup) {
+        // Seller should be in admin routes
         router.replace("/(admin)/(tabs)");
-      }, 0);
-    } else if (!isSignedIn && inAuthGroup) {
-      setTimeout(() => {
+        setHasRedirected(true);
+      } else if (!inAuthGroup && !inAdminGroup) {
+        // Default for signed-in users: go to auth tabs
+        router.replace("/(auth)/(tabs)");
+        setHasRedirected(true);
+      }
+    } else {
+      // Signed-out user logic
+      if (inAuthGroup || inAdminGroup) {
         router.replace("/(public)");
-      }, 0);
+        setHasRedirected(true);
+      }
     }
-  }, [isSignedIn, isLoaded, fontsLoaded, segments, router]); // Add fontsLoaded to dependencies
+  }, [
+    isSignedIn,
+    isLoaded,
+    fontsLoaded,
+    isProfileLoading,
+    userRole,
+    segments,
+    router,
+    hasRedirected,
+  ]);
 
-  // Return null until everything is loaded
-  if (!fontsLoaded || !isLoaded) {
+  // Handle font loading errors
+  useEffect(() => {
+    if (fontError) {
+      console.error("Font loading error:", fontError);
+    }
+  }, [fontError]);
+
+  // Add early return for loading states
+  if (!fontsLoaded || !isLoaded || isProfileLoading) {
+    if (__DEV__) {
+      console.log("Loading State:", {
+        fontsLoaded,
+        isLoaded,
+        isProfileLoading,
+      });
+    }
+    return null;
+  }
+
+  // Ensure segments is available before proceeding
+  if (!segments) {
+    if (__DEV__) {
+      console.log("No segments available yet");
+    }
     return null;
   }
 
   return (
-    <View
-      style={{ flex: 1, backgroundColor: "red" }}
-      onLayout={onLayoutRootView}
-    >
+    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
       <Slot />
     </View>
   );

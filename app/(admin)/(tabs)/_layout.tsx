@@ -23,28 +23,28 @@ const Layout = () => {
         }}
       >
         <Tabs.Screen
-          name='index'
-          options={{
-            headerShown: false,
-            title: "Listing",
-            tabBarIcon({ color, size }) {
-              return <AntDesign name='solution1' size={size} color={color} />;
-            },
-          }}
-        />
-        <Tabs.Screen
           name='create'
           options={{
             headerShown: false,
             title: "Create Items",
             tabBarIcon({ color, size }) {
-              return <AntDesign name='laptop' size={size} color={color} />;
+              return <AntDesign name='dashboard' size={size} color={color} />;
+            },
+          }}
+        />
+        <Tabs.Screen
+          name='index'
+          options={{
+            headerShown: false,
+            title: "Listing",
+            tabBarIcon({ color, size }) {
+              return <AntDesign name='isv' size={size} color={color} />;
             },
           }}
         />
 
         <Tabs.Screen
-          name='profile'
+          name='menu'
           options={{
             title: "User Profile",
             headerStyle: { backgroundColor: colors.background.secondary },

@@ -1,5 +1,12 @@
-import { View, Text, TouchableOpacity, Dimensions } from "react-native";
-import React, { useContext } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Dimensions,
+  Role,
+  Alert,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
@@ -9,27 +16,13 @@ import { router } from "expo-router";
 import { CaretRight } from "phosphor-react-native";
 import { ThemeContext } from "@/providers/ThemeProvider";
 import UserProfile from "@/app/components/UserProfile";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
-type ProfileProps = {
-  userId?: Id<"users">;
-  showBackButton?: boolean;
-};
-const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
+const Profile = () => {
   const { colors } = useContext(ThemeContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
-  // const { userProfile } = useUserProfile();
-  const userProfile = {
-    _creationTime: 1745075425708.771,
-    _id: "jd777hjdbxa16v8yhn33xsr52s7ebzm8",
-    clerkId: "user_2vx8aDFqJO7hHUmklYe4DenhCHg",
-    email: "ayushbhusal00@gmail.com",
-    first_name: "Ayush",
-    imageUrl:
-      "https://img.clerk.com/eyJ0eXBlIjoicHJveHkiLCJzcmMiOiJodHRwczovL2ltYWdlcy5jbGVyay5kZXYvb2F1dGhfZ29vZ2xlL2ltZ18ydng4YUMxdDYxbmxBRGJuRlU5S0N0NWZQekkifQ",
-    last_name: "Bhusal",
-    username: "Ayush Bhusal",
-  };
-  const { top } = useSafeAreaInsets();
+  const { userProfile } = useUserProfile();
   const { signOut } = useAuth();
 
   return (
@@ -61,28 +54,9 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             color: colors.text.secondary,
           }}
         >
-          ACCOUNT
+          SELLER
         </Text>
-        <TouchableOpacity onPress={() => console.log("Profile Data")}>
-          <View className='px-6 py-4 flex-row justify-between items-center'>
-            <View className='flex-row gap-4 items-center '>
-              <AntDesign
-                size={24}
-                color={colors.text.secondary}
-                name='smileo'
-              />
-              <Text
-                className={`text-subhead-1`}
-                style={{
-                  color: colors.text.secondary,
-                }}
-              >
-                Profile Data
-              </Text>
-            </View>
-            <CaretRight size={24} color={colors.text.secondary} />
-          </View>
-        </TouchableOpacity>
+
         <TouchableOpacity onPress={() => router.push(`./Orders`)}>
           <View className='px-6 py-4 flex-row justify-between items-center'>
             <View className='flex-row gap-4 items-center '>
@@ -98,6 +72,44 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
                 }}
               >
                 My Orders
+              </Text>
+            </View>
+            <CaretRight size={24} color={colors.text.secondary} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => console.log("Profile Data")}>
+          <View className='px-6 py-4 flex-row justify-between items-center'>
+            <View className='flex-row gap-4 items-center '>
+              <AntDesign
+                size={24}
+                color={colors.text.secondary}
+                name='wallet'
+              />
+              <Text
+                className={`text-subhead-1`}
+                style={{
+                  color: colors.text.secondary,
+                }}
+              >
+                Earnings
+              </Text>
+            </View>
+            <CaretRight size={24} color={colors.text.secondary} />
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => router.push(`../(admin)/(modal)/AddProduct`)}
+        >
+          <View className='px-6 py-4 flex-row justify-between items-center'>
+            <View className='flex-row gap-4 items-center '>
+              <AntDesign size={24} color={colors.text.secondary} name='skin' />
+              <Text
+                className={`text-subhead-1 `}
+                style={{
+                  color: colors.text.secondary,
+                }}
+              >
+                Create a new product
               </Text>
             </View>
             <CaretRight size={24} color={colors.text.secondary} />
@@ -157,8 +169,69 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
           </View>
         </TouchableOpacity>
       </View>
+      <View
+        style={{
+          borderTopColor: colors.background.border,
+          borderTopWidth: 0.5,
+        }}
+      >
+        <TouchableOpacity
+          onPress={() => signOut()}
+          style={{
+            paddingVertical: 12,
+            marginHorizontal: 20,
+            marginVertical: 12,
+            paddingHorizontal: 20,
+            justifyContent: "center",
+            alignItems: "center",
+            borderRadius: 16,
+            backgroundColor: colors.background.contrast,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 1,
+          }}
+        >
+          <View className='flex-row gap-2 items-center '>
+            <Text
+              className='text-lg'
+              style={{
+                color: colors.text.onColor,
+              }}
+            >
+              Log Out
+            </Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      <View
+        style={{
+          marginTop: 20,
+          marginBottom: 20,
+          flexDirection: "row",
+          gap: 16,
+          justifyContent: "center",
+        }}
+      >
+        <Text>Terms of Service</Text>
+        <Text>•</Text>
+        <Text>Privacy Policy</Text>
+      </View>
+      <View
+        style={{
+          marginTop: 6,
+          flexDirection: "row",
+          gap: 16,
+          justifyContent: "center",
+        }}
+      >
+        <Text style={{ color: colors.text.secondary }}>Version Alpha@0.1</Text>
+      </View>
       <TouchableOpacity
-        onPress={toggleTheme}
+        onPress={async () => {
+          await AsyncStorage.setItem("userRole", "user");
+          console.log("User Switched to Buyer");
+          router.replace("/(auth)/(tabs)");
+        }}
         style={{
           width: 200,
           position: "absolute",
@@ -175,7 +248,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
           shadowRadius: 1,
         }}
       >
-        <View className='flex-row gap-2 items-center '>
+        <View className='flex-row gap-2 items-center'>
           <AntDesign
             size={24}
             color={
@@ -189,7 +262,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
               color: colors.text.onColor,
             }}
           >
-            Switch to Seller
+            Switch to Buyer
           </Text>
         </View>
       </TouchableOpacity>

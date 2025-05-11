@@ -20,6 +20,7 @@ const UserProfile = (props: UserProfileProps) => {
   const { colors } = useContext(ThemeContext);
   const { userProfile } = useUserProfile();
   // console.log("user props 1:", props);
+  console.log("user props 2:", userProfile);
   return (
     <View style={{ backgroundColor: colors.background.secondary }}>
       <View

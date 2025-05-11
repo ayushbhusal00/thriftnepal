@@ -4,10 +4,11 @@ module.exports = {
   content: ["./app/**/*.{js,jsx,ts,tsx}"],
   presets: [require("nativewind/preset")],
   theme: {
-    
     extend: {
+      fontFamily: {
+        sans: ['Switzer-Variable'],
+      },
       colors: {
-        
         background: {
           primary: {
             DEFAULT: "#FFFFFF",
@@ -89,13 +90,6 @@ module.exports = {
           DEFAULT: "rgba(0, 0, 0, 0.05)",
           dark: "rgba(255, 255, 255, 0.05)",
         },
-      
-      },
-      // Set default font family to DMSans
-      fontFamily: {
-        sans: ['DMSans'], // Default font family for all text
-        dmsans: ['DMSans'],
-        'dmsans-italic': ['DMSans-Italic'],
       },
       // Define custom typography classes
       fontSize: {

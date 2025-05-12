@@ -6,7 +6,6 @@ import {
   Image,
   FlatList,
   SafeAreaView,
-  ScrollView,
 } from "react-native";
 import { useContext } from "react";
 import { ThemeContext } from "@/providers/ThemeProvider";
@@ -19,12 +18,14 @@ import { Id } from "@/convex/_generated/dataModel";
 export default function Page() {
   const router = useRouter();
   const { colors, theme } = useContext(ThemeContext);
-  const { userProfile } = useUserProfile();
+  const { userProfile, isLoading: isProfileLoading } = useUserProfile();
 
-  // Fetch all products for this user
-  const myProducts = useQuery(api.products.getMyProducts, {
-    userId: userProfile?._id as Id<"users">,
-  });
+  // Fetch all products for this user only if userProfile exists
+  const myProducts = useQuery(
+    api.products.getMyProducts,
+    userProfile?._id ? { userId: userProfile._id as Id<"users"> } : "skip"
+  );
+
   // Filter sold items
   const soldItems = (myProducts || []).filter((item) => item.sold);
 
@@ -41,6 +42,27 @@ export default function Page() {
       description: "Message from user Ayush",
     },
   ];
+
+  // Handle loading state
+  if (isProfileLoading) {
+    return (
+      <SafeAreaView
+        style={{
+          backgroundColor:
+            theme === "light"
+              ? colors.background.secondary
+              : colors.background.primary,
+          flex: 1,
+        }}
+      >
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ color: colors.text.primary }}>Loading...</Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView

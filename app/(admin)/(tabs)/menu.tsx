@@ -51,6 +51,11 @@ const Profile = () => {
     }
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.dismissTo("/(public)");
+  };
+
   return (
     <SafeAreaView
       style={{
@@ -211,7 +216,7 @@ const Profile = () => {
           }}
         >
           <TouchableOpacity
-            onPress={() => signOut()}
+            onPress={() => handleSignOut()}
             style={{
               paddingVertical: 12,
               marginHorizontal: 20,

@@ -42,6 +42,11 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
     }, 4800);
   };
 
+  const handleSignOut = async () => {
+    await signOut();
+    router.dismissTo("/(public)");
+  };
+
   return (
     <View
       style={{
@@ -194,7 +199,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
         }}
       >
         <TouchableOpacity
-          onPress={() => signOut()}
+          onPress={() => handleSignOut()}
           style={{
             paddingVertical: 12,
             marginHorizontal: 20,

@@ -56,10 +56,15 @@ export const useFavourites = create<FavouriteState>()(
 interface CartState {
   cart: Product[];
   cartCount: number;
+  selectedItems: string[];
   addCart: (newProduct: Product) => void;
   removeCart: (productId: string) => void;
   removeAllCart: () => void;
   updateCart: (newCart: Product[]) => void;
+  toggleItemSelection: (productId: string) => void;
+  selectAllItems: () => void;
+  deselectAllItems: () => void;
+  removeSelectedItems: () => void;
 }
 
 export const useCart = create<CartState>()(
@@ -67,6 +72,7 @@ export const useCart = create<CartState>()(
     (set) => ({
       cart: [],
       cartCount: 0,
+      selectedItems: [],
       addCart: (newProduct: Product) =>
         set((state) => {
           if (!newProduct._id || !newProduct.title || !newProduct.price) {
@@ -89,14 +95,37 @@ export const useCart = create<CartState>()(
           return {
             cart: newCart,
             cartCount: newCart.length,
+            selectedItems: state.selectedItems.filter((id) => id !== productId),
           };
         }),
-      removeAllCart: () => set({ cart: [], cartCount: 0 }),
+      removeAllCart: () => set({ cart: [], cartCount: 0, selectedItems: [] }),
       updateCart: (newCart: Product[]) =>
         set({ cart: newCart, cartCount: newCart.length }),
+      toggleItemSelection: (productId: string) =>
+        set((state) => ({
+          selectedItems: state.selectedItems.includes(productId)
+            ? state.selectedItems.filter((id) => id !== productId)
+            : [...state.selectedItems, productId],
+        })),
+      selectAllItems: () =>
+        set((state) => ({
+          selectedItems: state.cart.map((item) => item._id),
+        })),
+      deselectAllItems: () => set({ selectedItems: [] }),
+      removeSelectedItems: () =>
+        set((state) => {
+          const newCart = state.cart.filter(
+            (product) => !state.selectedItems.includes(product._id)
+          );
+          return {
+            cart: newCart,
+            cartCount: newCart.length,
+            selectedItems: [],
+          };
+        }),
     }),
     {
-      name: "cart-storage", // Key for localStorage
+      name: "cart-storage",
       storage: createJSONStorage(() => AsyncStorage),
     }
   )

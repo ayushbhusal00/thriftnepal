@@ -21,9 +21,13 @@ interface Product {
 const ProductList = ({
   item,
   icon,
+  isSelected,
+  onSelect,
 }: {
   item: Product;
   icon: "Heart" | "Trash";
+  isSelected?: boolean;
+  onSelect?: () => void;
 }) => {
   const { colors, theme } = useContext(ThemeContext);
   const { removeFavourites, addFavourites, favourites } = useFavourites();
@@ -55,124 +59,99 @@ const ProductList = ({
     >
       <View
         style={{
-          width: "100%",
+          flexDirection: "row",
+          padding: 16,
+          gap: 16,
         }}
       >
         <View
           style={{
-            width: "100%",
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
+            flex: 1,
+            flexDirection: "row",
+            gap: 16,
           }}
         >
+          <Image
+            source={{ uri: item.imageUrls[0] }}
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: 8,
+            }}
+          />
           <View
             style={{
               flex: 1,
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 12,
-              justifyContent: "center",
-              padding: 16,
+              gap: 4,
             }}
           >
-            {item.images.map((uri, index) => (
-              <Image
-                style={{ borderRadius: 6 }}
-                key={index}
-                source={{ uri: item.imageUrls[index] }}
-                accessibilityLabel={`Image for product"}`}
-                width={120}
-                height={120}
-              />
-            ))}
-            <View
+            <Text
               style={{
-                flexDirection: "column",
-                gap: 4,
-                width: "100%",
-                flex: 1,
+                color: colors.text.primary,
               }}
+              className='text-paragraph-1 font-dmsans'
             >
-              <Text
-                style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  color: colors.text.primary,
-                }}
-                numberOfLines={2}
-              >
-                {item.title}
-              </Text>
-              <Text
-                style={{
-                  fontWeight: "400",
-                  fontSize: 14,
-                  color: colors.text.primary,
-                }}
-                numberOfLines={2}
-              >
-                {item.brand}
-              </Text>
-
-              <Text
-                style={{
-                  fontWeight: "600",
-                  fontSize: 16,
-                  color: colors.text.green,
-                  marginTop: 8,
-                  marginBottom: 8,
-                }}
-              >
-                ₹ {item.price}
-              </Text>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 12,
-                }}
-              >
-                <Pressable
-                  onPress={() => {
-                    isFavourite
-                      ? removeFavourites(item._id)
-                      : addFavourites({
-                          ...item,
-                          category: "",
-                          size: "",
-                          condition: "",
-                        });
-                  }}
-                >
-                  <Heart
-                    size={24}
-                    color={colors.text.secondary}
-                    weight={isFavourite ? "fill" : "regular"}
-                  />
-                </Pressable>
-
-                <Pressable
-                  onPress={() => {
-                    removeFromCart(item._id);
-                  }}
-                >
-                  <Trash
-                    size={24}
-                    color={colors.text.secondary}
-                    weight='regular'
-                  />
-                </Pressable>
-              </View>
-            </View>
-            <Checkbox
-              value={false}
-              onValueChange={(value) => {}}
-              color={colors.brand.default}
-            />
+              {item.title}
+            </Text>
+            <Text
+              style={{
+                color: colors.text.secondary,
+              }}
+              className='text-paragraph-2 font-dmsans'
+            >
+              {item.brand}
+            </Text>
+            <Text
+              style={{
+                color: colors.text.primary,
+              }}
+              className='text-paragraph-1 font-dmsans'
+            >
+              ₹ {item.price}
+            </Text>
           </View>
         </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <Pressable
+            onPress={() => {
+              isFavourite
+                ? removeFavourites(item._id)
+                : addFavourites({
+                    ...item,
+                    category: "",
+                    size: "",
+                    condition: "",
+                  });
+            }}
+          >
+            <Heart
+              size={24}
+              color={colors.text.secondary}
+              weight={isFavourite ? "fill" : "regular"}
+            />
+          </Pressable>
+
+          <Pressable
+            onPress={() => {
+              removeFromCart(item._id);
+            }}
+          >
+            <Trash size={24} color={colors.text.secondary} weight='regular' />
+          </Pressable>
+        </View>
+        {onSelect && (
+          <Checkbox
+            value={isSelected}
+            onValueChange={onSelect}
+            color={colors.brand.default}
+          />
+        )}
       </View>
     </View>
   );

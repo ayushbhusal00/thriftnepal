@@ -7,7 +7,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 
 import { Id } from "@/convex/_generated/dataModel";
 import { useRouter } from "expo-router";
@@ -21,10 +21,29 @@ import { X } from "phosphor-react-native";
 const Page = () => {
   const { colors, theme } = useContext(ThemeContext);
   const cart = useCart((state) => state.cart);
+  const selectedItems = useCart((state) => state.selectedItems);
+  const toggleItemSelection = useCart((state) => state.toggleItemSelection);
+  const selectAllItems = useCart((state) => state.selectAllItems);
+  const deselectAllItems = useCart((state) => state.deselectAllItems);
+  const removeSelectedItems = useCart((state) => state.removeSelectedItems);
   const cartCount = cart.length;
   const screenHeight = Dimensions.get("window").height;
 
   const router = useRouter();
+
+  const selectedItemsTotal = useMemo(() => {
+    return cart
+      .filter((item) => selectedItems.includes(item._id))
+      .reduce((acc, item) => acc + item.price, 0);
+  }, [cart, selectedItems]);
+
+  const handleSelectAll = (value: boolean) => {
+    if (value) {
+      selectAllItems();
+    } else {
+      deselectAllItems();
+    }
+  };
 
   return (
     <SafeAreaView
@@ -55,7 +74,7 @@ const Page = () => {
                 <View
                   style={{
                     flex: 1,
-                    width: "100%", // Ensure full width within the FlatList
+                    width: "100%",
                   }}
                 >
                   <ProductList
@@ -66,6 +85,8 @@ const Page = () => {
                       userId: item.userId as Id<"users">,
                       brand: item.brand || "",
                     }}
+                    isSelected={selectedItems.includes(item._id)}
+                    onSelect={() => toggleItemSelection(item._id)}
                   />
                 </View>
               ) : (
@@ -74,15 +95,17 @@ const Page = () => {
             }}
             ListHeaderComponent={() => {
               return (
-                cartCount && (
+                cartCount > 0 && (
                   <View
                     style={{
                       flexDirection: "row",
                       justifyContent: "space-between",
                       alignItems: "center",
+                      marginBottom: 16,
                     }}
                   >
-                    <View
+                    <TouchableOpacity
+                      onPress={removeSelectedItems}
                       style={{
                         flexDirection: "row",
                         gap: 8,
@@ -91,9 +114,9 @@ const Page = () => {
                     >
                       <X size={20} color={colors.text.secondary} />
                       <Text style={{ color: colors.text.secondary }}>
-                        Delete Selected:
+                        Delete Selected ({selectedItems.length})
                       </Text>
-                    </View>
+                    </TouchableOpacity>
 
                     <View
                       style={{
@@ -102,10 +125,12 @@ const Page = () => {
                         alignItems: "center",
                       }}
                     >
-                      <Text>Selected all:</Text>
+                      <Text style={{ color: colors.text.primary }}>
+                        Select all:
+                      </Text>
                       <Checkbox
-                        value={cartCount === cart.length}
-                        onValueChange={(value) => {}}
+                        value={selectedItems.length === cart.length}
+                        onValueChange={handleSelectAll}
                         color={colors.brand.default}
                       />
                     </View>
@@ -224,21 +249,37 @@ const Page = () => {
           >
             <View
               style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                flex: 1,
+                flexDirection: "column",
+                gap: 12,
               }}
             >
-              {/* //Button */}
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text
+                  style={{ color: colors.text.primary }}
+                  className='text-paragraph-1 font-dmsans'
+                >
+                  Selected Items: {selectedItems.length}
+                </Text>
+                <Text
+                  style={{ color: colors.text.primary }}
+                  className='text-paragraph-1 font-dmsans'
+                >
+                  Total: ₹ {selectedItemsTotal}
+                </Text>
+              </View>
               <TouchableOpacity
                 onPress={() => {
                   handleInitiatePayment({
-                    amount: cart
-                      .reduce((acc, item) => acc + item.price, 0)
-                      .toString(),
+                    amount: selectedItemsTotal.toString(),
                   });
                 }}
+                disabled={selectedItems.length === 0}
                 style={{
                   flexDirection: "row",
                   paddingVertical: 12,
@@ -246,46 +287,27 @@ const Page = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   borderRadius: 16,
-                  backgroundColor: colors.brand.default,
+                  backgroundColor:
+                    selectedItems.length === 0
+                      ? colors.background.subtle
+                      : colors.brand.default,
                   shadowOffset: { width: 0, height: 1 },
                   shadowOpacity: 0.1,
                   shadowRadius: 1,
-                  flex: 1,
+                  opacity: selectedItems.length === 0 ? 0.5 : 1,
                 }}
               >
-                <View
+                <Text
                   style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    flex: 1,
+                    color:
+                      selectedItems.length === 0
+                        ? colors.text.secondary
+                        : colors.text.onColor,
                   }}
+                  className='text-paragraph-1 font-dmsans'
                 >
-                  <Text
-                    style={{
-                      color: colors.text.onColor,
-                    }}
-                    className='text-paragraph-1 font-dmsans'
-                  >
-                    {cart.length} items
-                  </Text>
-                  <Text
-                    style={{
-                      color: colors.text.onColor,
-                    }}
-                    className='text-paragraph-1 font-dmsans'
-                  >
-                    Continue to Payment
-                  </Text>
-                  <Text
-                    style={{
-                      color: colors.text.onColor,
-                    }}
-                    className='text-paragraph-1 font-dmsans'
-                  >
-                    ₹ {cart.reduce((acc, item) => acc + item.price, 0)}
-                  </Text>
-                </View>
+                  Continue to Payment
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

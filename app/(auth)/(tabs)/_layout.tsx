@@ -94,6 +94,7 @@ const Layout = () => {
         <Tabs.Screen
           name='profile'
           options={{
+            headerShown: false,
             title: "User Profile",
             headerStyle: { backgroundColor: colors.background.secondary },
             headerTintColor: colors.text.primary,

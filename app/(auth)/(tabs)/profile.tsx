@@ -1,8 +1,11 @@
 import { View, Text, TouchableOpacity, Dimensions, Image } from "react-native";
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUserProfile } from "@/hooks/useUserProfile";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useAuth } from "@clerk/clerk-expo";
 import { router } from "expo-router";
@@ -20,12 +23,14 @@ import {
 import { ThemeContext } from "@/providers/ThemeProvider";
 import UserProfile from "@/app/components/UserProfile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import LottieView from "lottie-react-native";
 
 type ProfileProps = {
   userId?: Id<"users">;
   showBackButton?: boolean;
 };
 const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
+  const animation = useRef<LottieView>(null);
   const { colors } = useContext(ThemeContext);
   const { theme, toggleTheme } = useContext(ThemeContext);
   const { userProfile } = useUserProfile();
@@ -48,7 +53,7 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
   };
 
   return (
-    <View
+    <SafeAreaView
       style={{
         backgroundColor: colors.background.secondary,
         flex: 1,
@@ -272,20 +277,31 @@ const Profile = ({ userId, showBackButton = true }: ProfileProps) => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(30, 30, 30, 0.7)",
+            backgroundColor: "rgba(255, 255, 255, 1)",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 100,
           }}
         >
-          <Image
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 200,
+              height: 200,
+              backgroundColor: "#eee",
+            }}
+            // Find more Lottie files at https://lottiefiles.com/featured
+            source={require("@/assets/images/profile-switch.json")}
+          />
+          {/* <Image
             source={require("@/assets/images/animated.gif")}
             style={{ width: 120, height: 120 }}
             resizeMode='contain'
-          />
+          /> */}
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 

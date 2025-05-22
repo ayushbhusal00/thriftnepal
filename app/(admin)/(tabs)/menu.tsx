@@ -10,7 +10,7 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AntDesign } from "@expo/vector-icons";
@@ -24,8 +24,10 @@ import UserProfile from "@/app/components/UserProfile";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useUserProfile } from "@/hooks/useUserProfile";
 import { useRole } from "@/providers/RoleProvider";
+import LottieView from "lottie-react-native";
 
 const Profile = () => {
+  const animation = useRef<LottieView>(null);
   const { colors, theme, toggleTheme } = useContext(ThemeContext);
   const { userProfile } = useUserProfile();
   const router = useRouter();
@@ -280,17 +282,28 @@ const Profile = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "rgba(30, 30, 30, 0.7)", // faded background
+            backgroundColor: "rgba(255, 255, 255, 1)",
             justifyContent: "center",
             alignItems: "center",
             zIndex: 100,
           }}
         >
-          <Image
-            source={require("@/assets/images/animated.gif")}
-            style={{ width: 120, height: 120 }}
-            resizeMode='contain'
+          <LottieView
+            autoPlay
+            ref={animation}
+            style={{
+              width: 200,
+              height: 200,
+              backgroundColor: "#eee",
+            }}
+            // Find more Lottie files at https://lottiefiles.com/featured
+            source={require("@/assets/images/profile-switch.json")}
           />
+          {/* // <Image
+          //   source={require("@/assets/images/animated.gif")}
+          //   style={{ width: 120, height: 120 }}
+          //   resizeMode='contain'
+          // /> */}
         </View>
       )}
       <TouchableOpacity
